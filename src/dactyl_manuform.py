@@ -466,6 +466,36 @@ def make_dactyl():
     ## SA Keycaps ##
     ################
 
+    def ulp_fancy_cap(Usize=1):
+        bl2 = 16 / 2
+        bw2 = 17 / 2
+        m = 16.5 / 2
+        pl2 = 3.5
+        pw2 = 3.5
+        key_height = 2.7
+        key_top_height = 5.2 # height of the top of the keycap with respect to the base
+
+        k1 = polyline([(bw2, bl2), (bw2, -bl2), (-bw2, -bl2), (-bw2, bl2), (bw2, bl2)])
+        k1 = extrude_poly(outer_poly=k1, height=0.1)
+        k1 = translate(k1, (0, 0, 0.05))
+        k2 = polyline([(pw2, pl2), (pw2, -pl2), (-pw2, -pl2), (-pw2, pl2), (pw2, pl2)])
+        k2 = extrude_poly(outer_poly=k2, height=0.1)
+        k2 = translate(k2, (0, 0, key_height))
+        if m > 0:
+            m1 = polyline([(m, m), (m, -m), (-m, -m), (-m, m), (m, m)])
+            m1 = extrude_poly(outer_poly=m1, height=0.1)
+            m1 = translate(m1, (0, 0, key_height))
+            key_cap = hull_from_shapes((k1, k2, m1))
+        else:
+            key_cap = hull_from_shapes((k1, k2))
+
+        key_cap = translate(key_cap, (0, 0, key_top_height - key_height + plate_thickness))
+
+        if show_pcbs:
+            key_cap = add([key_cap, key_pcb()])
+
+        return key_cap
+
     def ulp_cap(Usize=1):
         bl2 = 15.5 / 2
         bw2 = 15.5 / 2
@@ -495,6 +525,7 @@ def make_dactyl():
             key_cap = add([key_cap, key_pcb()])
 
         return key_cap
+
     def choc_cap(Usize=1):
         bl2 = 16.75 / 2
         bw2 = 16.75 / 2
@@ -871,9 +902,9 @@ def make_dactyl():
             for row in range(nrows):
                 if valid_key(column, row):
                     if caps is None:
-                        caps = key_place(ulp_cap(size), column, row)
+                        caps = key_place(ulp_fancy_cap(size), column, row)
                     else:
-                        caps = add([caps, key_place(ulp_cap(size), column, row)])
+                        caps = add([caps, key_place(ulp_fancy_cap(size), column, row)])
 
         return caps
 
@@ -2073,17 +2104,17 @@ def make_dactyl():
         else:
             shape = translate(cone(r1=bottom_radius, r2=top_radius, height=height), (0, 0, -height / 2))
 
-        if magnet_bottom:
-            if not hole:
-                shape = union((
-                    shape,
-                    translate(sphere(top_radius), (0, 0, mag_offset / 2)),
-                ))
-        else:
-            shape = union((
-                shape,
-                translate(sphere(top_radius), (0, 0,  (height / 2))),
-            ))
+        # if magnet_bottom:
+        #     if not hole:
+        #         shape = union((
+        #             shape,
+        #             translate(sphere(top_radius), (0, 0, mag_offset / 2)),
+        #         ))
+        # else:
+        #     shape = union((
+        #         shape,
+        #         translate(sphere(top_radius), (0, 0,  (height / 2))),
+        #     ))
         return shape
 
     def place_screw(shape, column, row, side='right'):
@@ -2185,7 +2216,7 @@ def make_dactyl():
 
     def screw_insert_outers(side='right'):
         height = screw_insert_height + 1.5
-        screw = translate(screw_insert_shape(screw_insert_bottom_radius + 1.6, screw_insert_top_radius + 1.6, height), [0,0,height / 2])
+        screw = translate(screw_insert_shape(screw_insert_bottom_radius + 1.6, screw_insert_top_radius + 1.6, height+1.6), [0,0,height / 2])
         return place_screw_all( screw , side=side)
 
 

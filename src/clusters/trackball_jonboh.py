@@ -7,8 +7,7 @@ from clusters.trackball_wilder import TrackballWild
 
 class TrackballJonboh(DefaultCluster):
     key_diameter = 75
-    translation_offset = [-10, 24, -21]
-    # translation_offset = [-10, 24, -25]
+    translation_offset = [-10, 24, -25]
     rotation_offset = [0, 0, 0]
     ball_wall_thickness = 4
     ball_gap = 4
@@ -86,7 +85,7 @@ class TrackballJonboh(DefaultCluster):
         return union([])
 
     def thumbcaps(self, side="right"):
-        t1 = self.thumb_1x_layout(ulp_cap(1))
+        t1 = self.thumb_1x_layout(ulp_fancy_cap(1))
         return t1
 
     def tb_post(self, y_rotation, z_rotation):
@@ -174,19 +173,10 @@ class TrackballJonboh(DefaultCluster):
         )
         hulls += _triangle_hulls(
             [
-                self.tr_place(web_post_tr()),
-                cluster_key_place(web_post_bl(), 0, cornerrow),
-                self.tl_place(web_post_br()),
-                self.tl_place(web_post_tr()),
-            ]
-        )
-        hulls += _triangle_hulls(
-            [
-                self.tl_place(web_post_tr()),
-                cluster_key_place(web_post_bl(), 0, cornerrow),
                 key_place(web_post_bl(), 0, 2),
-                self.tl_place(web_post_tr()),
+                self.tl_place(web_post_br()),
                 key_place(web_post_tl(), 0, 2),
+                self.tl_place(web_post_tr()),
             ]
         )
         hulls += _triangle_hulls(

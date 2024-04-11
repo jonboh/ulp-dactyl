@@ -8,8 +8,8 @@
   "logo_file": null,
   "quickly": false,
   "show_caps": false,
-  "show_pcbs": true,
-  "show_trackball": true,
+  "show_pcbs": false,
+  "show_trackball": false,
   "show_external_holder": false,
   "hull_trackball_cutter": false,
   "resin": false,
@@ -104,7 +104,7 @@
   "first_1_5U_row": 0,
   "last_1_5U_row": 5,
   "extra_width": 0.5,
-  "extra_height": -6,
+  "extra_height": -4,
   "wall_z_offset": 5,
   "wall_x_offset": 1,
   "wall_y_offset": 5,
@@ -118,7 +118,7 @@
   "wall_base_back_thickness": 2.5,
   "independent_walls": false,
   "fixed_angles": [
-    0.37453277777777776,
+    0.17453277777777776,
     0.0,
     0,
     0,
@@ -136,7 +136,7 @@
     89.6
   ],
   "fixed_z": [
-    15.2,
+    13.2,
     11.3,
     5,
     5,
@@ -188,7 +188,7 @@
   "screws_offset": "INSIDE",
   "magnet_bottom": false,
   "block_bottoms": false,
-  "screw_insert_height": 6,
+  "screw_insert_height": 5,
   "screw_insert_bottom_radius": 2.3,
   "screw_insert_top_radius": 1.95,
   "wire_post_height": 7,
@@ -305,13 +305,13 @@
       0
     ],
     [
-      -9,
+      -13.5,
       10,
       0
     ],
     [
-      -19,
-      -25,
+      -21,
+      -26,
       0
     ],
     [
