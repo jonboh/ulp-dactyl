@@ -1,33 +1,33 @@
-import numpy as np
-from numpy import mod, pi
-import os.path as path
 import getopt
-import sys
+import importlib
 import json
 import os
-import importlib
+import os.path as path
+import subprocess
+import sys
+from os import path
 
+import numpy as np
 import solid2 as s
+from numpy import mod, pi
 from solid2 import difference, hull, translate
-from clusters.default_cluster import DefaultCluster
+
+import fill_extension
+import wrist
 from clusters.carbonfet import CarbonfetCluster
+from clusters.custom_cluster import CustomCluster
+from clusters.default_cluster import DefaultCluster
 from clusters.mini import MiniCluster
 from clusters.minidox import MinidoxCluster
 from clusters.minithicc import Minithicc
 from clusters.minithicc3 import Minithicc3
-from clusters.trackball_orbyl import TrackballOrbyl
-from clusters.trackball_wilder import TrackballWild
-from clusters.trackball_three import TrackballThree
-from clusters.trackball_cj import TrackballCJ
-from clusters.custom_cluster import CustomCluster
 from clusters.trackball_btu import TrackballBTU
+from clusters.trackball_cj import TrackballCJ
 from clusters.trackball_jonboh import TrackballJonboh
+from clusters.trackball_orbyl import TrackballOrbyl
+from clusters.trackball_three import TrackballThree
+from clusters.trackball_wilder import TrackballWild
 from json_loader import load_json
-
-from os import path
-import subprocess
-import fill_extension
-import wrist
 
 
 def get_git_branch():
@@ -193,8 +193,6 @@ def make_dactyl():
     ####################################################
     # END HELPER FUNCTIONS
     ####################################################
-
-    quickly = False
 
     if oled_mount_type is not None and oled_mount_type != "NONE":
         for item in oled_configurations[oled_mount_type]:
@@ -1524,7 +1522,7 @@ def make_dactyl():
         if cutter:
             outer_shell_radius += cutter_tol
         trackball_radius = 17
-        ball_spacing = 3.5
+        ball_spacing = 1.5
         distance_bearing_plate = 2.5
         sensor_holder_distance = 10
         sensor_plate_extra_distance = -0.25
@@ -1588,7 +1586,8 @@ def make_dactyl():
             shape = union([shape, sphere(trackball_radius+ball_spacing), bearings, difference(sensor_cutter, [shell_cutter])])
             if hull_trackball_cutter:
                 shape = hull_from_shapes([shape])
-        # shape = union([shape, sphere(trackball_radius), bearings])
+        if show_trackball:
+            shape = union([shape, sphere(trackball_radius), bearings])
         # shape = union([shape, bearings])
         shape = translate(shape, [0, 0, 22])
         return shape
@@ -2328,6 +2327,8 @@ def make_dactyl():
                     shape = union([shape, tbcutout])
                 else:
                     shape = difference(shape, [tbcutout])
+                if show_trackball:
+                    shape = union([shape, tb])
                 # shape = union([shape, tb])
                 # shape = union([shape, sensor])
             else:
