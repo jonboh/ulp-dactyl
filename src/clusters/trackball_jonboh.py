@@ -249,6 +249,30 @@ class TrackballJonboh(DefaultCluster):
                 self.track_place,
                 -3,
                 0,
+                translate(self.tb_post_60(), wall_locate3(1, 3)),
+            )
+        )
+        shapes.append(
+            wall_brace(
+                self.track_place,
+                -3,
+                0,
+                translate(self.tb_post_60(), wall_locate3(-1, 3)),
+                self.track_place,
+                -3,
+                0,
+                translate(self.tb_post_90(), wall_locate3(-2, 2)),
+            )
+        )
+        shapes.append(
+            wall_brace(
+                self.track_place,
+                -3,
+                0,
+                translate(self.tb_post_90(), wall_locate3(-2, 2)),
+                self.track_place,
+                -3,
+                0,
                 translate(self.tb_post_120(), wall_locate3(-4, 0)),
             )
         )
@@ -469,33 +493,22 @@ class TrackballJonboh(DefaultCluster):
         shapes.append(
             triangle_hulls(
                 [
-                    self.track_place(self.tb_post_120()),
-                    self.track_place(self.tb_post_90()),
-                    left_key_place(web_post(), 0, -1, low_corner=True, side=side),
-                    self.track_place(self.tb_post_90()),
-                    left_key_place(web_post(), 0, -1, low_corner=True, side=side),
+                    key_place(web_post_bl(), 0, 0),
                     self.track_place(self.tb_post_60()),
-                    key_place(web_post_bl(), 0, 0),
-                ]
-            )
-        )
-        shapes.append(
-            triangle_hulls(
-                [
-                    self.track_place(
-                        translate(self.tb_post_120(), wall_locate3(-4, 0))
-                    ),
-                    left_key_place(web_post(), 0, -1, low_corner=True, side=side),
-                    left_key_place(web_post(), 0, 1, low_corner=True, side=side),
-                    key_place(web_post_bl(), 0, 0),
                     key_place(web_post_tl(), 0, 0),
+                    left_key_place(web_post(), 0, 1, low_corner=True, side=side),
                 ]
             )
         )
         shapes.append(
             triangle_hulls(
                 [
-                    left_key_place(web_post(), 0, -1, low_corner=True, side=side),
+                    # left_key_place(web_post(), 0, -1, low_corner=True, side=side),
+                    left_key_place(web_post(), 0, 1, side=side),
+                    self.track_place(self.tb_post_60()),
+                    self.track_place(translate(self.tb_post_60(), wall_locate3(-1, 3))),
+                    self.track_place(self.tb_post_90()),
+                    self.track_place(translate(self.tb_post_90(), wall_locate3(-2, 2))),
                     self.track_place(self.tb_post_120()),
                     self.track_place(
                         translate(self.tb_post_120(), wall_locate3(-4, 0))
