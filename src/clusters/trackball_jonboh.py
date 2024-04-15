@@ -427,7 +427,9 @@ class TrackballJonboh(DefaultCluster):
                 -1,
                 web_post_br(),
                 (lambda sh: cluster_key_place(sh, 4, lastrow)),
-                1,
+                1
+                if not thin_right_wall
+                else 0.3,  # NOTE: hack to close border in the thin wall case
                 0,
                 web_post_br(),
             )

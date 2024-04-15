@@ -1194,6 +1194,14 @@ def make_dactyl():
         shapes.append(key_wall_brace(x, 0, 0, 1, web_post_tl(), x, 0, 0, 1, web_post_tr(), back=True))
         shapes.append(key_wall_brace(x, 0, 0, 1, web_post_tr(), x+2, 0, 0, 1, web_post_tl(), back=True))
         shapes.append(key_wall_brace(x+2, 0, 0, 1, web_post_tl(), x+2, 0, 0, 1, web_post_tr(), back=True))
+
+        if thin_right_wall:
+            global wall_thickness
+            global wall_base_x_thickness
+            _wall_thickness = wall_thickness
+            _wall_base_x_thickness = wall_base_x_thickness
+            wall_thickness = 0
+            wall_base_x_thickness = 0
         for i in range(2, ncols - 1):
             x = i + 1
             shapes.append(key_wall_brace(x, 0, 0, 1, web_post_tl(), x, 0, 0, 1, web_post_tr(), back=True))
@@ -1203,6 +1211,9 @@ def make_dactyl():
         shapes.append(key_wall_brace(
             lastcol, 0, 0, 1, web_post_tr(), lastcol, 0, 1, 0, web_post_tr(), back=True
         ))
+        if thin_right_wall:
+            wall_thickness = _wall_thickness
+            wall_base_x_thickness = _wall_base_x_thickness
 
         # extra braces for index finger wall
         extra_braces = [
@@ -1223,6 +1234,13 @@ def make_dactyl():
 
     def right_wall():
         print("right_wall()")
+        if thin_right_wall:
+            global wall_thickness
+            global wall_base_x_thickness
+            _wall_thickness = wall_thickness
+            _wall_base_x_thickness = wall_base_x_thickness
+            wall_thickness = 0
+            wall_base_x_thickness = 0
 
         torow = lastrow - 1
         if (full_last_rows or ncols < 5):
@@ -1244,13 +1262,17 @@ def make_dactyl():
             ))
             # STRANGE PARTIAL OFFSET
 
-        # NOTE: uncomment this if using fron_wall instead of extended cluster walls
+        # NOTE: uncomment this if using front_wall() instead of extended cluster walls
         # if ncols > 4:
         #     shapes.append(key_wall_brace(lastcol, torow, 0, -1, web_post_br(), lastcol, torow, 1, 0, web_post_br())
         #     )
         # union all shapes into vertical and brace
         vertical = union(list(map(lambda x: x[0], shapes)))
         braces = union(list(map(lambda x: x[1], shapes)))
+
+        if thin_right_wall:
+            wall_thickness = _wall_thickness
+            wall_base_x_thickness = _wall_base_x_thickness
         return vertical, braces
 
 

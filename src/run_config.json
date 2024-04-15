@@ -116,6 +116,7 @@
   "wall_base_y_thickness": 2.5,
   "wall_base_x_thickness": 2.5,
   "wall_base_back_thickness": 2.5,
+  "thin_right_wall": true,
   "independent_walls": false,
   "fixed_angles": [
     0.17453277777777776,
