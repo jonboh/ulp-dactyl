@@ -157,6 +157,8 @@
   "sa_profile_key_height": 12.7,
   "sa_length": 18.5,
   "sa_double_length": 37.5,
+  "plate_insert_height": 1.5,
+  "plate_insert_height_screw_tolerance": 0.1,
   "plate_thickness": 2.5,
   "plate_rim_width": 1.5,
   "plate_rim_height": 1,

@@ -89,7 +89,22 @@ python src/dactyl_manuform.py
 
 In order to render the model use one of the [development snapshots from OpenSCAD](https://openscad.org/downloads.html#snapshots).
 This code makes use of the fill function that is not implemented in the last release (from 2021).
-I currently use `OpenSCAD-2023.10.27.ai16657`, later ones should work as well.
+I used `OpenSCAD-2023.10.27.ai16657` to develop most of the code.
+I currently use `OpenSCAD-2024.04.13.ai19033`. In addition some of the geometries of this model seem to only
+work with the Manifold library instead of the CGAL one. I use the following settings (file `~/.config/OpenSCAD.conf`):
+```
+[advanced]
+openCSGLimit=10000000
+
+[design]
+autoReload=true
+
+[feature]
+fast-csg=true
+fast-csg-safer=true
+manifold=true
+```
+
 
 
 ## Quickly iterating
