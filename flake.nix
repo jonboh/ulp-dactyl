@@ -1,12 +1,39 @@
 {
   description = "Use the solidpython2 flake";
-  # Specifies the Nix flake inputs, such as Nixpkgs.
+
   inputs = {
-    # nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    solidpython2.url = "github:jonboh/nix-environments?dir=solidpython2";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    solidpython2 = {
+      url = "github:jonboh/nix-environments?dir=solidpython2";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
-  # Defines the outputs provided by this flake.
-  outputs = { self, solidpython2 }: {
-    devShells = solidpython2.devShells;
+
+  outputs = {
+    self,
+    nixpkgs,
+    solidpython2,
+    ...
+  } @ inputs: let
+    system = "x86_64-linux";
+    pkgs = import nixpkgs {
+      inherit system;
+    };
+  in {
+    devShells.${system}.default = pkgs.mkShell {
+      packages = [
+        # pkgs.openscad-unstable # currently broken for ulp-dactyl models, use dev snapshots from April 2024
+        (pkgs.python3.withPackages
+          (ps:
+            with ps; [
+              ruff-lsp
+              autopep8
+              debugpy
+              setuptools
+              solidpython2.packages.${system}.python3Packages.solidpython2
+              numpy
+            ]))
+      ];
+    };
   };
 }
