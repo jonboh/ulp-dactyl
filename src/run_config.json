@@ -158,7 +158,7 @@
   "sa_length": 18.5,
   "sa_double_length": 37.5,
   "plate_insert_height": 1.5,
-  "plate_insert_height_screw_tolerance": 0.1,
+  "plate_insert_height_screw_tolerance": 0.2,
   "plate_thickness": 2.5,
   "plate_rim_width": 1.5,
   "plate_rim_height": 1,
@@ -191,7 +191,7 @@
   "screws_offset": "INSIDE",
   "magnet_bottom": false,
   "block_bottoms": false,
-  "screw_insert_height": 5,
+  "screw_insert_height": 4.5,
   "screw_insert_bottom_radius": 2.3,
   "screw_insert_top_radius": 1.95,
   "wire_post_height": 7,
@@ -288,43 +288,43 @@
   ],
   "screw_offsets": [
     [
-      3,
       5,
+      9.5,
       0
     ],
     [
       78,
-      -31,
+      -29.5,
       0
     ],
     [
-      -94,
+      -92,
       20,
       0
     ],
     [
-      -13,
-      5,
+      -14.5,
+      3.5,
       0
     ],
     [
-      -13.5,
-      10,
+      -12.5,
+      9.5,
       0
     ],
     [
-      -21,
+      -19.5,
       -26,
       0
     ],
     [
       -20,
-      20,
+      23,
       0
     ],
     [
-      -74,
-      53,
+      -71,
+      50,
       0
     ]
   ],

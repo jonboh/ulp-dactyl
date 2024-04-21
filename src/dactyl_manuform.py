@@ -764,7 +764,7 @@ def make_dactyl():
             ]
         )(
             s.cube(
-                [mount_width + 0.5, mount_height + 0.5, 2 * mount_thickness],
+                [mount_width + 1, mount_height + 1, 2.5 * mount_thickness],
                 center=True,
             )
         )
@@ -968,7 +968,7 @@ def make_dactyl():
 
     def plate_cutters():
         pcbs = None
-        single_plate_cutter = plate_cutter()
+        single_plate_cutter = s.down(0.4)(plate_cutter())
         # single_pcb = key_pcb()
         for column in range(ncols):
             for row in range(nrows):
@@ -2628,7 +2628,7 @@ def make_dactyl():
         shape = [
             translate(
                 place_screw(screw, 0, 0, side=side),
-                (so[0][0] - 8 if side == "right" else so[0][0], so[0][1], so[0][2]),
+                (so[0][0], so[0][1], so[0][2]),
             ),  # rear left
             translate(
                 place_screw(screw, 0, lastrow - 1, side=side),
@@ -2677,8 +2677,8 @@ def make_dactyl():
 
     def screw_insert_outers(side="right"):
         height = screw_insert_height
-        thickness_xy = 1.5
-        thickness_z = 1
+        thickness_xy = 3
+        thickness_z = 0.4
 
         screw = translate(
             screw_insert_shape(
@@ -3052,7 +3052,7 @@ def make_dactyl():
             wall_base_back_thickness,
         )
         quickly = False
-        post_size += 4
+        post_size += 1
         # wall_x_offset -= 0.25
         # wall_y_offset -= 0.25
         # wall_base_x_thickness += 0.5
@@ -3085,7 +3085,7 @@ def make_dactyl():
             model_cutter, s.down(250)(s.cube(500, center=True))
         )
         model_cutter = s.down(plate_insert_height)(model_cutter)
-        # return model_cutter
+        extra_wall_cutter = s.down(plate_insert_height + 0.5)(walls)
 
         base = s.difference()(
             translate(
@@ -3095,7 +3095,7 @@ def make_dactyl():
                 [0, 0, -base_thickness],
             ),
             model_cutter,
-            surface_pcbs(),
+            extra_wall_cutter,
             tool,
             rubber_feet,
         )
@@ -3126,7 +3126,7 @@ def make_dactyl():
         length2 = 100
         if hole:
             width += 1
-            height += 0.4
+            height += 0.2
             length1 += 1
             length2 += 1
         shape = s.union()(
