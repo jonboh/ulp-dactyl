@@ -2990,7 +2990,7 @@ def make_dactyl():
         )
         return [
             translate(rubber_feet_hole, [-47, 19, 0]),
-            translate(rubber_feet_hole, [-70, -64, 0]),
+            translate(rubber_feet_hole, [-75, -58, 0]),
             translate(rubber_feet_hole, [-99, -19, 0])
             if side == "right"
             else translate(rubber_feet_hole, [-60, -19, 0]),
@@ -3161,9 +3161,9 @@ def make_dactyl():
             wall_base_back_thickness,
         )
         post_size += 1
-        wall_base_y_thickness += 1
-        wall_base_x_thickness += 1
-        wall_base_back_thickness += 1
+        wall_base_y_thickness += 0.5
+        wall_base_x_thickness += 0.75
+        wall_base_back_thickness += 0.5
         inner_base = _simple_baseplate(side=side)
         post_size += 1.5
         wall_base_y_thickness += 1.5

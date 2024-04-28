@@ -106,8 +106,8 @@ class DefaultCluster(object):
         debugprint("br_place()")
         # shape = rotate(shape, [6, -20, 10])
         # shape = translate(shape, [-32, -44, -9])
-        shape = rotate(shape, [20, 40, -5])
-        shape = translate(shape, [22, -46, -57])
+        shape = rotate(shape, [20, 45, 15])
+        shape = translate(shape, [22, -46, -59.5])
         shape = self.thumb_place(shape)
         return shape
 
@@ -487,7 +487,9 @@ class DefaultCluster(object):
                 -1,
                 web_post_br(),
                 (lambda sh: cluster_key_place(sh, 4, lastrow)),
-                1 if not thin_right_wall else 0.3, # NOTE: hack to close border in the thin wall case
+                1
+                if not thin_right_wall
+                else 0.3,  # NOTE: hack to close border in the thin wall case
                 0,
                 web_post_br(),
             )
