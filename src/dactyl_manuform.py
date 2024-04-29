@@ -3469,7 +3469,26 @@ def make_dactyl():
         )
         return case_top, case_bottom
 
+    def make_keycaps():
+        shape = import_file(path.join(parts_path, r"ulp_keycap"))
+        shapes = [shape]
+        amount = 10
+        for i in range(amount):
+            displacement = s.left(17 * i)
+            shapes.append(displacement(shape))
+            if i != 0:
+                shapes.append(
+                    displacement(
+                        s.right(8.5)(
+                            s.up(2.2 + 0.75)(s.cube([3, 1.5, 1.5], center=True))
+                        )
+                    )
+                )
+        shape = s.union()(*shapes)
+        export_file(shape, fname=path.join(save_path, "ulp_keycap_bundle"))
+
     def run():
+        make_keycaps()
         mod_l, walls_l = model_side(side="left")
         export_file(shape=mod_l, fname=path.join(save_path, config_name + r"_left"))
         base_l = mirror(baseplate(side="left"), "YZ")
@@ -3687,8 +3706,7 @@ def rexroth_bearing(cutter):
 if __name__ == "__main__":
     make_dactyl()
 
-    if ENGINE == "solid":
-        make_btu2static()
+    make_btu2static()
 
     # base = baseplate()
     # export_file(shape=base, fname=path.join(save_path, config_name + r"_plate"))
