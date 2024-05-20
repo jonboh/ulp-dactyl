@@ -106,8 +106,8 @@ class DefaultCluster(object):
         debugprint("br_place()")
         # shape = rotate(shape, [6, -20, 10])
         # shape = translate(shape, [-32, -44, -9])
-        shape = rotate(shape, [20, 45, 15])
-        shape = translate(shape, [22, -46, -59.5])
+        shape = rotate(shape, [27, 35, -5])
+        shape = translate(shape, [22, -42, -60])
         shape = self.thumb_place(shape)
         return shape
 
@@ -141,7 +141,9 @@ class DefaultCluster(object):
 
     def thumb(self, side="right"):
         print("thumb()")
-        shape = self.thumb_1x_layout(single_plate(side=side))
+        plate = single_plate(side=side)
+        # plate = s.union()(plate, cross())
+        shape = self.thumb_1x_layout(plate)
         return shape
 
     def pcbs(self, side="right"):

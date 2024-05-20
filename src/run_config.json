@@ -16,14 +16,13 @@
   "nrows": 3,
   "ncols": 5,
   "alpha": 0.29,
-  "_alpha": 0.49,
   "beta": 0.08726638888888888,
   "centercol": 3,
   "centerrow_offset": 2,
   "tenting_angle": 0.28,
   "symmetry": "symmetric",
   "column_style_gt5": "orthographic",
-  "column_style": "standard",
+  "column_style": "fixed",
   "shift_column": 0,
   "inner_column": false,
   "all_last_rows": true,
@@ -104,7 +103,7 @@
   "first_1_5U_row": 0,
   "last_1_5U_row": 5,
   "extra_width": 0.5,
-  "extra_height": -4,
+  "extra_height": -1,
   "wall_z_offset": 5,
   "wall_x_offset": 1,
   "wall_y_offset": 5,
@@ -118,32 +117,33 @@
   "wall_base_back_thickness": 2.5,
   "thin_right_wall": true,
   "independent_walls": false,
+  "fixed_alpha": [
+    0.29,
+    0.29,
+    0.29,
+    0.29,
+    0.43
+  ],
   "fixed_angles": [
-    0.27453277777777776,
-    0.0,
+    0.32,
     0,
     0,
     0,
-    -0.26179916666666664,
-    -0.26179916666666664
+    0
   ],
   "fixed_x": [
     -38.5,
     -19,
     2,
     23,
-    44,
-    65.5,
-    89.6
+    44
   ],
   "fixed_z": [
-    14.2,
+    14.4,
     11.3,
     5,
     5,
-    10.7,
-    14.5,
-    17.5
+    10.7
   ],
   "fixed_tenting": 0.0,
   "plate_style": "ULP",
@@ -154,7 +154,7 @@
   "undercut_keyswitch_height": 14.25,
   "undercut_keyswitch_width": 14.25,
   "notch_width": 5.0,
-  "sa_profile_key_height": 12.7,
+  "sa_profile_key_height": 4,
   "sa_length": 18.5,
   "sa_double_length": 37.5,
   "plate_insert_height": 1.5,
@@ -203,13 +203,13 @@
   "blackpill_holder_xoffset": -6.5,
   "external_holder_width": 32,
   "external_holder_height": 16,
-  "external_holder_xoffset": -16,
-  "external_holder_yoffset": 1,
+  "external_holder_xoffset": -12,
+  "external_holder_yoffset": 1.5,
   "external_holder_zoffset": 0,
   "external_holder_rotation": [
     0,
     0,
-    8.5
+    7.5
   ],
   "usb_c_width": 9.5,
   "usb_c_height": 3.5,
@@ -309,12 +309,12 @@
     ],
     [
       -12.5,
-      9.5,
+      7.5,
       0
     ],
     [
       -18.5,
-      -26,
+      -25,
       0
     ],
     [
