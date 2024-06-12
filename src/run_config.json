@@ -117,12 +117,19 @@
   "wall_base_back_thickness": 2.5,
   "thin_right_wall": true,
   "independent_walls": false,
+  "fixed_height": [
+    -1,
+    -1,
+    -1,
+    -1,
+    -2.5
+  ],
   "fixed_alpha": [
     0.29,
     0.29,
     0.29,
     0.29,
-    0.43
+    0.36
   ],
   "fixed_angles": [
     0.32,
@@ -323,8 +330,8 @@
       0
     ],
     [
-      -71,
-      50,
+      -72,
+      54,
       0
     ]
   ],

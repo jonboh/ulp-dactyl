@@ -7,7 +7,7 @@ from clusters.trackball_wilder import TrackballWild
 
 class TrackballJonboh(DefaultCluster):
     key_diameter = 75
-    translation_offset = [-10, 24, -24]
+    translation_offset = [-10, 24, -25.5]
     rotation_offset = [0, 0, 0]
     ball_wall_thickness = 4
     ball_gap = 4

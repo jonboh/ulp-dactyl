@@ -107,7 +107,7 @@ class DefaultCluster(object):
         # shape = rotate(shape, [6, -20, 10])
         # shape = translate(shape, [-32, -44, -9])
         shape = rotate(shape, [27, 35, -5])
-        shape = translate(shape, [22, -42, -60])
+        shape = translate(shape, [22, -43, -60])
         shape = self.thumb_place(shape)
         return shape
 

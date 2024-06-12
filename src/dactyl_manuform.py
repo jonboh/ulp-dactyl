@@ -501,11 +501,11 @@ def make_dactyl():
     def ulp_fancy_cap(Usize=1):
         bl2 = 16 / 2
         bw2 = 17 / 2
-        m = 16.5 / 2
+        m = 16 / 2
         pl2 = 3.5
         pw2 = 3.5
-        key_height = 2.7
-        key_top_height = 5.2  # height of the top of the keycap with respect to the base
+        key_height = 2.2
+        key_top_height = 4.2  # height of the top of the keycap with respect to the base
 
         k1 = polyline([(bw2, bl2), (bw2, -bl2), (-bw2, -bl2), (-bw2, bl2), (bw2, bl2)])
         k1 = extrude_poly(outer_poly=k1, height=0.1)
@@ -845,7 +845,9 @@ def make_dactyl():
             row_radius = {
                 col: ((mount_height + extra_height) / 2) / (np.sin(alpha / 2))
                 + cap_top_height
-                for col, alpha in enumerate(fixed_alpha)
+                for col, (alpha, extra_height) in enumerate(
+                    zip(fixed_alpha, fixed_height)
+                )
             }
             shape = rotate_y_fn(shape, fixed_angles[column])
             shape = translate_fn(shape, [fixed_x[column], 0, fixed_z[column]])
@@ -1805,10 +1807,10 @@ def make_dactyl():
     def use_btus(cluster):
         return trackball_in_wall or (cluster is not None and cluster.has_btus())
 
-    def rexroth_bearing(cutter):
-        tolerance_diameter = 0.25
-        tolerance_depth_head = 1.5
-        tolerance_depth_body = 2.5
+    def rexroth_bearing(cutter, extra_tol=0):
+        tolerance_diameter = 0.25 + extra_tol
+        tolerance_depth_head = 1.5 + extra_tol
+        tolerance_depth_body = 2.5 + extra_tol
         return translate(
             union(
                 [
@@ -1832,8 +1834,8 @@ def make_dactyl():
             [0, 0, -0.9],
         )
 
-    def rexroth_bearing_cutter():
-        return rexroth_bearing(True)
+    def rexroth_bearing_cutter(extra_tol=0):
+        return rexroth_bearing(True, extra_tol)
 
     def trackball_holder(cutter=False):
         cutter_tol = 2
@@ -1845,7 +1847,7 @@ def make_dactyl():
         distance_bearing_plate = 2.5
         sensor_holder_distance = 10
         sensor_plate_extra_distance = -0.25
-        bearings_horizon_rotation = [10, 10, 10]
+        bearings_horizon_rotation = [22, 5, 0]
         bearing_zrotation_offset = 40
         sensor_rotations = (
             [70, 0, 0],
@@ -1862,7 +1864,7 @@ def make_dactyl():
             [60, 20, 17.5],
             [-40, 40, 17.5],
             [-50, 0, 7.5],
-            [-20, -30, -9.5],
+            [-20, -30, -6.5],
             [20, -30, -9.5],
         ]
         if cutter:
@@ -1883,11 +1885,15 @@ def make_dactyl():
         sensor_hole = box(12, 8, 100)
         sensor_plate_distance = trackball_radius + sensor_plate_extra_distance
 
+        if cutter:
+            bearing_cutter = rexroth_bearing_cutter(extra_tol=1)
+        else:
+            bearing_cutter = rexroth_bearing_cutter()
         bearings = union(
             [
                 rotate(
                     translate(
-                        rotate(rexroth_bearing_cutter(), [0, 90, 0]),
+                        rotate(bearing_cutter, [0, 90, 0]),
                         [-trackball_radius - distance_bearing_plate, 0, 0],
                     ),
                     [0, -bearings_horizon_rotation[0], bearing_zrotation_offset + 0],
@@ -1895,7 +1901,7 @@ def make_dactyl():
                 rotate(
                     rotate(
                         translate(
-                            rotate(rexroth_bearing_cutter(), [0, 90, 0]),
+                            rotate(bearing_cutter, [0, 90, 0]),
                             [-trackball_radius - distance_bearing_plate, 0, 0],
                         ),
                         [0, -bearings_horizon_rotation[1], 0],
@@ -1905,12 +1911,12 @@ def make_dactyl():
                 rotate(
                     rotate(
                         translate(
-                            rotate(rexroth_bearing_cutter(), [0, 90, 0]),
+                            rotate(bearing_cutter, [0, 90, 0]),
                             [-trackball_radius - distance_bearing_plate, 0, 0],
                         ),
                         [0, -bearings_horizon_rotation[2], 0],
                     ),
-                    [0, 0, bearing_zrotation_offset + 250],
+                    [0, 0, bearing_zrotation_offset + 260],
                 ),
             ]
         )
@@ -1963,7 +1969,7 @@ def make_dactyl():
             [trackball_hole, shell_cutter, cylinder_cutter, bearings, sensor_cutter],
         )
         shape = difference(union([shape, sensor_holder]), [shell_cutter])
-        # shape = union([shape, sensor_cutter])
+        # shape = union([shape, shell_cutter])
         if cutter:
             # remove floor to avoid cutting baseplate
             shape = difference(shape, [translate(box(60, 60, 25), [0, 0, -20])])
@@ -2944,7 +2950,7 @@ def make_dactyl():
                 ),
             )
 
-        # shape = difference(shape, [pcbs(), cluster(side).pcbs()])
+        # shape = difference(shape, [surface_pcbs(), cluster(side).pcbs()])
         if show_caps:
             shape = add([shape, cluster(side).thumbcaps(side=side)])
             shape = add([shape, caps()])
@@ -3470,24 +3476,6 @@ def make_dactyl():
             False,
         )
         return case_top, case_bottom
-
-    def make_keycaps():
-        shape = import_file(path.join(parts_path, r"ulp_keycap"))
-        shapes = [shape]
-        amount = 10
-        for i in range(amount):
-            displacement = s.left(17 * i)
-            shapes.append(displacement(shape))
-            if i != 0:
-                shapes.append(
-                    displacement(
-                        s.right(8.5)(
-                            s.up(2.2 + 0.75)(s.cube([3, 1.5, 1.5], center=True))
-                        )
-                    )
-                )
-        shape = s.union()(*shapes)
-        export_file(shape, fname=path.join(save_path, "ulp_keycap_bundle"))
 
     def arrow(length=10, color=s.color([0, 0, 0])):
         # Arrow consists of a cylinder with a cone at the end
