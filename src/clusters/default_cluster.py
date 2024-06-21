@@ -106,8 +106,8 @@ class DefaultCluster(object):
         debugprint("br_place()")
         # shape = rotate(shape, [6, -20, 10])
         # shape = translate(shape, [-32, -44, -9])
-        shape = rotate(shape, [27, 35, -5])
-        shape = translate(shape, [22, -43, -60])
+        shape = rotate(shape, [17, 35, -5])
+        shape = translate(shape, [22, -41.9, -60])
         shape = self.thumb_place(shape)
         return shape
 

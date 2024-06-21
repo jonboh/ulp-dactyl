@@ -803,11 +803,23 @@ def make_dactyl():
         )
         return np.matmul(t_matrix, position)
 
+    def rotate_around_z(position, angle):
+        # debugprint('rotate_around_y()')
+        t_matrix = np.array(
+            [
+                [np.cos(angle), -np.sin(angle), 0],
+                [np.sin(angle), np.cos(angle), 0],
+                [0, 0, 1],
+            ]
+        )
+        return np.matmul(t_matrix, position)
+
     def apply_key_geometry(
         shape,
         translate_fn,
         rotate_x_fn,
         rotate_y_fn,
+        rotate_z_fn,
         column,
         row,
         column_style=column_style,
@@ -870,7 +882,7 @@ def make_dactyl():
 
         shape = rotate_y_fn(shape, tenting_angle)
         shape = translate_fn(shape, [0, 0, keyboard_z_offset])
-
+        shape = rotate_z_fn(shape, column_rotation_z[column])
         return shape
 
     def bottom_key(column):
@@ -905,9 +917,13 @@ def make_dactyl():
         # debugprint('y_rot()')
         return rotate(shape, [0, rad2deg(angle), 0])
 
+    def z_rot(shape, angle):
+        # debugprint('y_rot()')
+        return rotate(shape, [0, 0, rad2deg(angle)])
+
     def key_place(shape, column, row):
         debugprint("key_place()")
-        return apply_key_geometry(shape, translate, x_rot, y_rot, column, row)
+        return apply_key_geometry(shape, translate, x_rot, y_rot, z_rot, column, row)
 
     def cluster_key_place(shape, column, row):
         debugprint("key_place()")
@@ -917,7 +933,7 @@ def make_dactyl():
         # if c > ncols - 1:
         #     c = ncols - 1
         # c = column if not inner_column else column + 1
-        return apply_key_geometry(shape, translate, x_rot, y_rot, c, row)
+        return apply_key_geometry(shape, translate, x_rot, y_rot, z_rot, c, row)
 
     def add_translate(shape, xyz):
         debugprint("add_translate()")
@@ -929,7 +945,13 @@ def make_dactyl():
     def key_position(position, column, row):
         debugprint("key_position()")
         return apply_key_geometry(
-            position, add_translate, rotate_around_x, rotate_around_y, column, row
+            position,
+            add_translate,
+            rotate_around_x,
+            rotate_around_y,
+            rotate_around_z,
+            column,
+            row,
         )
 
     def _key_holes(side="right"):
@@ -2836,7 +2858,13 @@ def make_dactyl():
             s2,
             s.down(2 * plate_insert_height)(s.union()(*screw_insert_outers(side=side))),
         )
-        s2 = union([s2, *screw_insert_outers(side=side)])
+        inserts = s.difference()(
+            s.union()(*screw_insert_outers(side=side)),
+            s.up(1.75 * plate_insert_height)(
+                cluster(side).pcbs(side=side)
+            ),  # NOTE: ? why do we have to move it up?
+        )
+        s2 = union([s2, inserts])
         if trrs_hole:
             s2 = difference(s2, [trrs_mount_point()])
         if controller_side == "both" or side == controller_side:
@@ -2983,7 +3011,7 @@ def make_dactyl():
             translate(rubber_feet_hole, [-99, -19, 0])
             if side == "right"
             else translate(rubber_feet_hole, [-60, -19, 0]),
-            translate(rubber_feet_hole, [42, -65, 0]),
+            translate(rubber_feet_hole, [42, -62, 0]),
             translate(rubber_feet_hole, [42, -10, 0]),
             translate(rubber_feet_hole, [2, 27, 0]),
         ]
