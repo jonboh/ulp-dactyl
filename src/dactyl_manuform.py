@@ -9,7 +9,7 @@ from os import path
 
 import numpy as np
 import solid2 as s
-from numpy import ModuleDeprecationWarning, mod, pi
+from numpy import ModuleDeprecationWarning, mod, pi, place
 from solid2 import difference, hull, translate
 
 import fill_extension
@@ -1451,42 +1451,12 @@ def make_dactyl():
             )
         )
 
-        # shapes.append(wall_brace(
-        #     (lambda sh: left_key_place(sh, 0, 1, side=side)), 0, 1, web_post(),
-        #     (lambda sh: left_key_place(sh, 0, 1, side=side)), -1, 0, web_post(),
-        # ))
-
         extra_braces = list()
         if full_last_rows:
             torow = lastrow + 1
         else:
             torow = lastrow
         torow -= 3
-        for i in range(torow):
-            y = i
-            low = y == (lastrow - 1)
-            shapes.append(
-                wall_brace(
-                    (lambda sh: left_key_place(sh, y, 1, side=side)),
-                    -1,
-                    0,
-                    web_post(),
-                    (lambda sh: left_key_place(sh, y, -1, low_corner=low, side=side)),
-                    -1,
-                    0,
-                    web_post(),
-                )
-            )
-            extra_braces.append(
-                hull_from_shapes(
-                    (
-                        key_place(web_post_tl(), 0, y),
-                        key_place(web_post_bl(), 0, y),
-                        left_key_place(web_post(), y, 1, side=side),
-                        left_key_place(web_post(), y, -1, low_corner=low, side=side),
-                    )
-                )
-            )
         # union all shapes into vertical and brace
         vertical = union(list(map(lambda x: x[0], shapes)))
         braces = union(list(map(lambda x: x[1], shapes)) + extra_braces)
@@ -1706,24 +1676,6 @@ def make_dactyl():
         )
     )
 
-    def blackpill_mount_hole():
-        print("blackpill_external_mount_hole()")
-        shape = box(blackpill_holder_width, 20.0, external_holder_height + 0.1)
-        undercut = box(
-            blackpill_holder_width + 8, 10.0, external_holder_height + 8 + 0.1
-        )
-        shape = union([shape, translate(undercut, (0, -5, 0))])
-
-        shape = translate(
-            shape,
-            (
-                external_start[0] + blackpill_holder_xoffset,
-                external_start[1] + external_holder_yoffset,
-                external_holder_height / 2 - 0.05,
-            ),
-        )
-        return shape
-
     def external_mount_hole():
         print("external_mount_hole()")
         shape = box(external_holder_width, 40.0, external_holder_height + 0.1)
@@ -1740,28 +1692,13 @@ def make_dactyl():
         )
         return shape
 
-    def compactyl_mount_hole():
-        shape = import_file(path.join(parts_path, r"usb_holder_vertical_cutout"))
-        compactyl_holder_height = 30.6
-        compactyl_holder_width = 18
-        # undercut = box( 10.0,external_holder_width + 8, external_holder_height + 8 + .1)
-        # shape = union([shape, translate(undercut, (0, -5, 0))])
-        shape = translate(
-            rotate(shape, external_holder_rotation),
-            [
-                external_start[0] + external_holder_xoffset,
-                external_start[1] + external_holder_yoffset,
-                compactyl_holder_height / 2 - 0.05,
-            ],
-        )
-        return shape
-
     def usb_holder_w_reset_platecutter():
-        holder = import_file(path.join(parts_path, r"usb_holder_w_reset"))
+        # holder = import_file(path.join(parts_path, r"usb_holder_w_reset"))
+        holder, _ = _usb_holder_w_reset()
         top_plate = s.translate([0, 0.5, 18])(s.cube([36, 2, 8], center=True))
         left_plate = s.translate([18, 0.5, 11])(s.cube([7, 2, 22], center=True))
         right_plate = s.translate([-18, 0.5, 11])(s.cube([7, 2, 22], center=True))
-        back = s.translate([0, -5, 0])
+        back = s.translate([0, -wall_thickness - 2 * 1 - 0 - 1, 0])
         front_plate = s.hull()(
             top_plate,
             left_plate,
@@ -1770,60 +1707,152 @@ def make_dactyl():
             back(left_plate),
             back(right_plate),
         )
-        main_body = s.translate([-8, -45, 0])(s.cube(24, 45, 5))
+        main_body = s.translate([-8, -40, 0])(s.cube(24, 40, 5))
         jack_body = s.translate([-14, -19, 0])(s.cube([9, 19, 5]))
         holder = s.union()(holder, front_plate, main_body, jack_body)
-        holder = s.translate([-4, 22.5, -11])(holder)
+        # holder = s.translate([-3, 22.5, -11])(holder)
         return holder
 
-    def usb_holder_w_reset():
+    def _usb_holder_w_reset():
         holder = import_file(path.join(parts_path, r"usb_holder_w_reset"))
+        holder_plate_thickness = 1
+        extra_wall_thickness = 0  # NOTE: walls can have extra thickness due to angles
         plate_clamp_length = 5
-        _holder_height = 15
+        holder_height = 15
+        holder_width = 30.6
         corner_cut_angle = 30
-        corner_cut_height_offset = 2
-        top_plate = s.translate([0, 0.5, 12 + plate_clamp_length])(
-            s.cube([36, 1, plate_clamp_length], center=True)
-        )
+        top_plate = s.translate(
+            [0, holder_plate_thickness / 2, 12 + plate_clamp_length]
+        )(s.cube([36, holder_plate_thickness, plate_clamp_length], center=True))
         left_plate = s.translate(
-            [11 + plate_clamp_length, 0.5, (_holder_height + plate_clamp_length) / 2]
+            [
+                11 + plate_clamp_length,
+                holder_plate_thickness / 2,
+                (holder_height + plate_clamp_length) / 2,
+            ]
         )(
             s.cube(
-                [plate_clamp_length, 1, _holder_height + plate_clamp_length],
+                [
+                    plate_clamp_length,
+                    holder_plate_thickness,
+                    holder_height + plate_clamp_length,
+                ],
                 center=True,
             )
         )
         right_plate = s.translate(
-            [-11 - plate_clamp_length, 0.5, (_holder_height + plate_clamp_length) / 2]
+            [
+                -11 - plate_clamp_length,
+                holder_plate_thickness / 2,
+                (holder_height + plate_clamp_length) / 2,
+            ]
         )(
             s.cube(
-                [plate_clamp_length, 1, _holder_height + plate_clamp_length],
+                [
+                    plate_clamp_length,
+                    holder_plate_thickness,
+                    holder_height + plate_clamp_length,
+                ],
                 center=True,
             )
         )
-        back = s.translate([0, -5, 0])
-        holder = s.union()(
-            holder,
-            top_plate,
-            left_plate,
-            right_plate,
-            back(top_plate),
-            back(left_plate),
-            back(right_plate),
+        back = s.translate(
+            [
+                0,
+                -wall_thickness - 2 * holder_plate_thickness - extra_wall_thickness,
+                0,
+            ]
         )
-        corner_cutter = s.translate(
-            [-20, -20, _holder_height + corner_cut_height_offset]
-        )(s.cube([40, 40, 20]))
-        corner_cutter_right = s.translateX(-11)(
-            s.rotate([0, -corner_cut_angle, 0])(corner_cutter)
+        side_plate_connector = s.cube(
+            holder_plate_thickness,
+            wall_thickness + 2 * holder_plate_thickness + extra_wall_thickness,
+            holder_height,
         )
-        corner_cutter_left = s.translateX(11)(
-            s.rotate([0, corner_cut_angle, 0])(corner_cutter)
+        left_top_plate_connector = s.up(holder_height - holder_plate_thickness)(
+            s.cube(
+                6,
+                wall_thickness + 2 * holder_plate_thickness + extra_wall_thickness,
+                holder_plate_thickness,
+            )
+        )
+        right_top_plate_connector = s.up(holder_height - holder_plate_thickness)(
+            s.cube(
+                17,
+                wall_thickness + 2 * holder_plate_thickness + extra_wall_thickness,
+                holder_plate_thickness,
+            )
+        )
+        plate_connector = s.union()(
+            s.translateX(holder_width / 2 - holder_plate_thickness / 2)(
+                side_plate_connector
+            ),
+            s.translateX(-holder_plate_thickness / 2 - holder_width / 2)(
+                side_plate_connector
+            ),
+            s.translateX(8)(left_top_plate_connector),
+            s.translateX(-16)(right_top_plate_connector),
         )
 
-        holder = s.difference()(holder, corner_cutter_right, corner_cutter_left)
-        holder = s.translate([-4, 22.5, -11])(holder)
-        return holder
+        def corner_cutter(offset):
+            corner_cutter = s.translate([-20, -20, holder_height + offset])(
+                s.cube([40, 40, 20])
+            )
+            corner_cutter_right = s.translateX(-11)(
+                s.rotate([0, -corner_cut_angle, 0])(corner_cutter)
+            )
+            corner_cutter_left = s.translateX(11)(
+                s.rotate([0, corner_cut_angle, 0])(corner_cutter)
+            )
+            return s.union()(corner_cutter_left, corner_cutter_right)
+
+        front_plate = s.difference()(
+            s.union()(
+                top_plate,
+                left_plate,
+                right_plate,
+            ),
+            corner_cutter(1),
+        )
+        holder = s.difference()(
+            s.union()(
+                holder,
+                back(top_plate),
+                back(left_plate),
+                back(right_plate),
+                back(plate_connector),
+            ),
+            corner_cutter(-1),
+        )
+        holder = s.union()(front_plate, holder)
+        # fix frood length
+        holder = s.difference()(
+            holder, s.translate([0, -38 - 10, 0])(s.cube([40, 20, 40], center=True))
+        )
+        holder = s.union()(
+            holder,
+            s.translate([-6.1, -38 - holder_plate_thickness / 2 - 0.4, 0])(
+                s.cube(21.4, holder_plate_thickness, 5)
+            ),
+        )
+
+        wall_cutter = s.difference()(
+            s.translate([-external_holder_width / 2, 5 - 40, -0.1])(
+                s.cube(external_holder_width, 40.0, external_holder_height + 0.1)
+            ),
+            corner_cutter(0),
+        )
+
+        # return holder, wall_cutter
+        # holder = s.translate([-3, 22.5, -11])(holder)
+        # wall_cutter = s.translate([-3, 22.5, -11])(wall_cutter)
+        return holder, wall_cutter
+
+    def usb_holder_w_reset():
+        holder, cutter = tuple(map(place_usb_holder_w_reset, _usb_holder_w_reset()))
+        holder = s.difference()(
+            holder, s.up(plate_insert_height + 0.2)(tilter_notch(hole=True))
+        )
+        return holder, cutter
 
     ########### TRACKBALL GENERATION
     def use_btus(cluster):
@@ -2793,6 +2822,7 @@ def make_dactyl():
         return shape
 
     def place_usb_holder_w_reset(holder):
+        holder = s.translate([-3, 22.5, -11])(holder)
         holder = translate(
             translate(
                 rotate(
@@ -2810,7 +2840,6 @@ def make_dactyl():
                 external_start[1] + external_holder_yoffset,
                 external_holder_zoffset,
             ],
-            # translate(rotate(holder, [0,0,0]), [0, 0, 0]), [external_start[0] + external_holder_xoffset, external_start[1] + external_holder_yoffset, 0]
         )
         return holder
 
@@ -2868,39 +2897,11 @@ def make_dactyl():
         if trrs_hole:
             s2 = difference(s2, [trrs_mount_point()])
         if controller_side == "both" or side == controller_side:
-            if controller_mount_type in ["RJ9_USB_TEENSY", "USB_TEENSY"]:
-                s2 = union([s2, teensy_holder()])
-            if controller_mount_type in [
-                "RJ9_USB_TEENSY",
-                "RJ9_USB_WALL",
-                "USB_WALL",
-                "USB_TEENSY",
-            ]:
-                s2 = union([s2, usb_holder()])
-                s2 = difference(s2, [usb_holder_hole()])
-            if controller_mount_type in ["USB_C_WALL"]:
-                s2 = difference(s2, [usb_c_mount_point()])
-            if controller_mount_type in ["RJ9_USB_TEENSY", "RJ9_USB_WALL"]:
-                s2 = difference(s2, [rj9_space()])
-            if controller_mount_type in ["BLACKPILL_EXTERNAL"]:
-                s2 = difference(s2, [blackpill_mount_hole()])
             if controller_mount_type in ["EXTERNAL"]:
-                s2 = difference(s2, [external_mount_hole()])
-                # s2 = union([s2, external_mount_hole()])
+                holder, cutter = usb_holder_w_reset()
+                s2 = s.difference()(s2, cutter)
                 if show_external_holder:
-                    holder = usb_holder_w_reset()
-                    # holder = union([holder, box(18,36,22), ]) # dupont clearance
-                    holder = place_usb_holder_w_reset(holder)
                     s2 = union([s2, holder])
-
-            if controller_mount_type in ["COMPACTYL"]:
-                s2 = difference(s2, [compactyl_mount_hole()])
-            if controller_mount_type in ["COMPACTYL_VERTICAL"]:
-                s2 = difference(s2, [compactyl_vertical_mount_hole()])
-                # s2 = union([s2, compactyl_vertical_mount_hole()])
-            if controller_mount_type in ["None"]:
-                0  # do nothing, only here to expressly state inaction.
-
         s2 = s.difference()(s2, s.union()(*screw_insert_holes(side=side)))
         # s2 = s.union()(*screw_insert_holes(side=side))
         if independent_walls:
@@ -2965,6 +2966,7 @@ def make_dactyl():
             # if show_caps:
             #     shape = add([shape, ball])
 
+        shape = s.difference()(shape, wall_rubber_feet_holes(side))
         floor = translate(box(400, 400, 40), (0, 0, -20))
         shape = difference(shape, [floor])
         if independent_walls:
@@ -2998,7 +3000,41 @@ def make_dactyl():
         body = s.difference()(body, model, base)
         return body
 
-    def rubber_feet_holes(side):
+    def wall_rubber_feet_holes(side, hole_through=False):
+        rubber_feet_hole_depth = 1
+        rubber_feet_radius = 3.25
+        if not hole_through:
+            rubber_feet_hole = translate(
+                cylinder(rubber_feet_radius, rubber_feet_hole_depth),
+                [0, 0, rubber_feet_hole_depth / 2 - 0.01],
+            )
+        else:
+            rubber_feet_hole = translate(
+                cylinder(rubber_feet_radius, rubber_feet_hole_depth + 10),
+                [0, 0, rubber_feet_hole_depth / 2 - 0.01],
+            )
+        rubber_feet = [
+            translate(rubber_feet_hole, [-76, -75, 0]),  # thumb back
+            translate(rubber_feet_hole, [-110.5, -5, 0])  # thumb front
+            if side == "right"
+            else translate(rubber_feet_hole, [-79, -24, 0]),
+            translate(rubber_feet_hole, [32, 25, 0]),  # anular front
+            translate(rubber_feet_hole, [52.25, -68.25, 0]),  # pinky front
+            translate(rubber_feet_hole, [56, 3.5, 0]),  # pinky back
+            translate(rubber_feet_hole, [-22, -43.5, 0]),  # backside
+            translate(rubber_feet_hole, [-56.5, 27, 0]),
+            translate(rubber_feet_hole, [-50, 27.5, 0]),
+            translate(rubber_feet_hole, [-43.5, 28, 0]),
+        ]
+        if side == "left":
+            rubber_feet += [
+                translate(rubber_feet_hole, [-61, 20, 0]),
+                translate(rubber_feet_hole, [-61.5, 13.5, 0]),
+                translate(rubber_feet_hole, [-61.5, 7, 0]),
+            ]
+        return rubber_feet
+
+    def base_rubber_feet_holes(side):
         rubber_feet_hole_depth = 1.64
         rubber_feet_radius = 4.25
         rubber_feet_hole = translate(
@@ -3032,7 +3068,7 @@ def make_dactyl():
         shape = union([*case_walls(side=side), *screw_insert_outers(side=side)])
 
         tool = s.down(plate_insert_height)(s.union()(*baseplate_holes(side=side)))
-        rubber_feet = rubber_feet_holes(side)
+        rubber_feet = wall_rubber_feet_holes(side, hole_through=True)
         base = box(1000, 1000, 0.01)
         shape = intersect(shape, base)
 
@@ -3221,7 +3257,9 @@ def make_dactyl():
         holder = s.down(base_thickness / 2)(place_usb_holder_w_reset(holder))
         outer_base = s.difference()(outer_base, holder)
         top = s.difference()(outer_base, s.up(base_thickness)(inner_base))
-        top = s.difference()(top, s.up(base_thickness - 1)(rubber_feet_holes(side)))
+        top = s.difference()(
+            top, s.up(base_thickness - 1)(base_rubber_feet_holes(side))
+        )
         base = s.union()(baseplate, tilter_notch(hole=False))
         shape = s.down(base_thickness)(mirror(base, "XY"))
         rotation = 45
@@ -3246,7 +3284,7 @@ def make_dactyl():
         shape = s.right(centering)(shape)
 
         shape = s.difference()(
-            shape, s.up(base_thickness)(s.union()(rubber_feet_holes(side)))
+            shape, s.up(base_thickness)(s.union()(base_rubber_feet_holes(side)))
         )
         if side == "left":
             shape = mirror(shape, "YZ")
@@ -3529,6 +3567,8 @@ def make_dactyl():
 
     def run():
         # make_keycaps()
+        mod_r, walls_r = model_side(side="right")
+        export_file(shape=mod_r, fname=path.join(save_path, config_name + r"_right"))
         mod_l, walls_l = model_side(side="left")
         export_file(shape=mod_l, fname=path.join(save_path, config_name + r"_left"))
         base_l = mirror(baseplate(side="left"), "YZ")
@@ -3542,20 +3582,22 @@ def make_dactyl():
             shape=tilter_l, fname=path.join(save_path, config_name + r"_left_tilter")
         )
 
-        export_file(
-            shape=trackball_holder(), fname=path.join(save_path, "trackball_holder")
-        )
+        # export_file(
+        #     shape=trackball_holder(), fname=path.join(save_path, "trackball_holder")
+        # )
         export_file(
             shape=trackball_holder(True),
             fname=path.join(save_path, "trackball_holder_cutter"),
         )
-        export_file(shape=single_plate(), fname=path.join(save_path, "single_plate"))
+        # export_file(shape=single_plate(), fname=path.join(save_path, "single_plate"))
         export_file(
-            shape=usb_holder_w_reset(),
+            shape=usb_holder_w_reset()[0],
             fname=path.join(save_path, "usb_holder_w_reset_plated"),
         )
-        mod_r, walls_r = model_side(side="right")
-        export_file(shape=mod_r, fname=path.join(save_path, config_name + r"_right"))
+        export_file(
+            shape=usb_holder_w_reset_platecutter(),
+            fname=path.join(save_path, "usb_holder_w_reset_platecutter"),
+        )
         tilter_r = tilter(side="right")
         export_file(
             shape=tilter_r, fname=path.join(save_path, config_name + r"_right_tilter")

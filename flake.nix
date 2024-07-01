@@ -22,7 +22,8 @@
   in {
     devShells.${system}.default = pkgs.mkShell {
       packages = [
-        # pkgs.openscad-unstable # currently broken for ulp-dactyl models, use dev snapshots from April 2024
+        pkgs.openscad-unstable # currently broken for ulp-dactyl models, use dev snapshots from April 2024
+        pkgs.pyright
         (pkgs.python3.withPackages
           (ps:
             with ps; [

@@ -104,17 +104,17 @@
   "last_1_5U_row": 5,
   "extra_width": 0.5,
   "extra_height": -1,
-  "wall_z_offset": 5,
+  "wall_z_offset": 6,
   "wall_x_offset": 1,
-  "wall_y_offset": 5,
-  "left_wall_x_offset": 8,
-  "left_wall_z_offset": 3,
+  "wall_y_offset": 4,
+  "left_wall_x_offset": 0,
+  "left_wall_z_offset": 0,
   "left_wall_lower_y_offset": 0,
   "left_wall_lower_z_offset": 0,
-  "wall_thickness": 2.5,
-  "wall_base_y_thickness": 2.5,
-  "wall_base_x_thickness": 2.5,
-  "wall_base_back_thickness": 2.5,
+  "wall_thickness": 7,
+  "wall_base_y_thickness": 7,
+  "wall_base_x_thickness": 7,
+  "wall_base_back_thickness": 7,
   "thin_right_wall": true,
   "independent_walls": false,
   "fixed_height": [
@@ -217,13 +217,13 @@
   "blackpill_holder_xoffset": -6.5,
   "external_holder_width": 32,
   "external_holder_height": 16,
-  "external_holder_xoffset": -12,
-  "external_holder_yoffset": 1.5,
+  "external_holder_xoffset": -7.5,
+  "external_holder_yoffset": 2,
   "external_holder_zoffset": 0,
   "external_holder_rotation": [
     0,
     0,
-    7.5
+    8.75
   ],
   "usb_c_width": 9.5,
   "usb_c_height": 3.5,
@@ -302,8 +302,8 @@
   ],
   "screw_offsets": [
     [
-      5,
-      9.5,
+      5.5,
+      8.5,
       0
     ],
     [
@@ -312,32 +312,32 @@
       0
     ],
     [
-      -92,
+      -85,
       20,
       0
     ],
     [
-      -14.5,
-      3.5,
+      -15,
+      6,
       0
     ],
     [
       -12.5,
-      9.5,
+      8.5,
       0
     ],
     [
-      -17.5,
+      -15.5,
       -23,
       0
     ],
     [
-      -45,
+      -44,
       15,
       0
     ],
     [
-      -72,
+      -79,
       54,
       0
     ]

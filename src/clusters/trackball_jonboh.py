@@ -210,7 +210,7 @@ class TrackballJonboh(DefaultCluster):
                 -1,
                 web_post_bl(),
                 self.bl_place,
-                -3,
+                -1,
                 -1,
                 web_post_br(),
             )
@@ -218,11 +218,11 @@ class TrackballJonboh(DefaultCluster):
         shapes.append(
             wall_brace(
                 self.bl_place,
-                -3,
+                -1,
                 -1,
                 web_post_br(),
                 self.bl_place,
-                -3,
+                -1,
                 -1,
                 web_post_bl(),
             )
@@ -230,11 +230,11 @@ class TrackballJonboh(DefaultCluster):
         shapes.append(
             wall_brace(
                 self.bl_place,
-                -3,
+                -1,
                 -1,
                 web_post_bl(),
                 self.bl_place,
-                -3,
+                -1,
                 0,
                 web_post_bl(),
             )
@@ -247,19 +247,31 @@ class TrackballJonboh(DefaultCluster):
                 1,
                 web_post(),
                 self.track_place,
-                -3,
+                -1,
                 0,
-                translate(self.tb_post_60(), wall_locate3(1, 3)),
+                translate(self.tb_post_60(), wall_locate3(0, 3)),
             )
         )
         shapes.append(
             wall_brace(
                 self.track_place,
-                -3,
+                -1,
+                0,
+                translate(self.tb_post_60(), wall_locate3(0, 3)),
+                self.track_place,
+                -1,
+                0,
+                translate(self.tb_post_60(), wall_locate3(-1, 3)),
+            )
+        )
+        shapes.append(
+            wall_brace(
+                self.track_place,
+                -1,
                 0,
                 translate(self.tb_post_60(), wall_locate3(-1, 3)),
                 self.track_place,
-                -3,
+                -1,
                 0,
                 translate(self.tb_post_90(), wall_locate3(-2, 2)),
             )
@@ -267,23 +279,23 @@ class TrackballJonboh(DefaultCluster):
         shapes.append(
             wall_brace(
                 self.track_place,
-                -3,
+                -1,
                 0,
                 translate(self.tb_post_90(), wall_locate3(-2, 2)),
                 self.track_place,
-                -3,
+                -1,
                 0,
-                translate(self.tb_post_120(), wall_locate3(-4, 0)),
+                translate(self.tb_post_120(), wall_locate3(-3, 0)),
             )
         )
         shapes.append(
             wall_brace(
                 self.track_place,
-                -3,
+                -1,
                 0,
-                translate(self.tb_post_120(), wall_locate3(-4, 0)),
+                translate(self.tb_post_120(), wall_locate3(-3, 0)),
                 self.track_place,
-                -3,
+                -1,
                 0,
                 translate(self.tb_post_180(), wall_locate3(-2, 0)),
             )
@@ -291,11 +303,11 @@ class TrackballJonboh(DefaultCluster):
         shapes.append(
             wall_brace(
                 self.track_place,
-                -3,
+                -1,
                 0,
                 translate(self.tb_post_180(), wall_locate3(-2, 0)),
                 self.track_place,
-                -3,
+                -1,
                 0,
                 translate(self.tb_post_210(), wall_locate3(-2, 0)),
             )
@@ -303,11 +315,11 @@ class TrackballJonboh(DefaultCluster):
         shapes.append(
             wall_brace(
                 self.track_place,
-                -3,
+                -1,
                 0,
                 translate(self.tb_post_210(), wall_locate3(-2, 0)),
                 self.track_place,
-                -3,
+                -1,
                 0,
                 translate(self.tb_post_240(), wall_locate3(-2, 0)),
             )
@@ -315,11 +327,11 @@ class TrackballJonboh(DefaultCluster):
         shapes.append(
             wall_brace(
                 self.track_place,
-                -3,
+                -1,
                 0,
                 translate(self.tb_post_240(), wall_locate3(-2, 0)),
                 self.bl_place,
-                -3,
+                -1,
                 0,
                 web_post_tl(),
             )
@@ -327,11 +339,11 @@ class TrackballJonboh(DefaultCluster):
         shapes.append(
             wall_brace(
                 self.bl_place,
-                -3,
+                -1,
                 0,
                 web_post_tl(),
                 self.bl_place,
-                -3,
+                -1,
                 0,
                 web_post_bl(),
             )
@@ -439,7 +451,7 @@ class TrackballJonboh(DefaultCluster):
             bottom_hull(
                 _triangle_hulls(
                     [
-                        self.mr_place(translate(web_post_br(), wall_locate3(0, -1))),
+                        self.mr_place(translate(web_post_br(), wall_locate1(0, -1))),
                         self.mr_place(
                             translate(web_post_br(), wall_locate3(0, -1, True))
                         ),
@@ -455,7 +467,10 @@ class TrackballJonboh(DefaultCluster):
                             translate(web_post_br(), wall_locate3(0, -1)), 0, lastrow
                         ),
                         cluster_key_place(
-                            translate(web_post_br(), wall_locate3(0, -1, True)),
+                            translate(web_post_br(), wall_locate2(0, -1)), 0, lastrow
+                        ),
+                        cluster_key_place(
+                            translate(web_post_br(), wall_locate1(0, -1)),
                             0,
                             lastrow,
                         ),
@@ -505,19 +520,14 @@ class TrackballJonboh(DefaultCluster):
         shapes.append(
             triangle_hulls(
                 [
-                    # left_key_place(web_post(), 0, -1, low_corner=True, side=side),
-                    left_key_place(web_post(), 0, 1, side=side),
+                    left_key_place(web_post(), 0, 1, low_corner=True, side=side),
                     self.track_place(self.tb_post_60()),
                     self.track_place(translate(self.tb_post_60(), wall_locate3(-1, 3))),
                     self.track_place(self.tb_post_90()),
                     self.track_place(translate(self.tb_post_90(), wall_locate3(-2, 2))),
                     self.track_place(self.tb_post_120()),
                     self.track_place(
-                        translate(self.tb_post_120(), wall_locate3(-4, 0))
-                    ),
-                    self.track_place(self.tb_post_150()),
-                    self.track_place(
-                        translate(self.tb_post_150(), wall_locate3(-4, 0))
+                        translate(self.tb_post_120(), wall_locate3(-3, 0))
                     ),
                     self.track_place(self.tb_post_180()),
                     self.track_place(
@@ -574,7 +584,7 @@ class TrackballJonboh(DefaultCluster):
                 [
                     self.tr_place(web_post_br()),
                     cluster_key_place(
-                        translate(web_post_br(), wall_locate3(0, -1)), 0, lastrow
+                        translate(web_post_br(), wall_locate1(0, -1)), 0, lastrow
                     ),
                     cluster_key_place(web_post_br(), 0, lastrow),
                 ]

@@ -107,7 +107,7 @@ class DefaultCluster(object):
         # shape = rotate(shape, [6, -20, 10])
         # shape = translate(shape, [-32, -44, -9])
         shape = rotate(shape, [17, 35, -5])
-        shape = translate(shape, [22, -41.9, -60])
+        shape = translate(shape, [22, -41.9, -62])
         shape = self.thumb_place(shape)
         return shape
 
@@ -295,7 +295,7 @@ class DefaultCluster(object):
                 -1,
                 web_post_bl(),
                 self.bl_place,
-                -3,
+                -1,
                 -1,
                 web_post_br(),
             )
@@ -303,11 +303,11 @@ class DefaultCluster(object):
         shapes.append(
             wall_brace(
                 self.bl_place,
-                -3,
+                -1,
                 -1,
                 web_post_br(),
                 self.bl_place,
-                -3,
+                -1,
                 -1,
                 web_post_bl(),
             )
@@ -315,11 +315,11 @@ class DefaultCluster(object):
         shapes.append(
             wall_brace(
                 self.bl_place,
-                -3,
+                -1,
                 -1,
                 web_post_bl(),
                 self.bl_place,
-                -3,
+                -1,
                 0,
                 web_post_bl(),
             )
@@ -380,7 +380,7 @@ class DefaultCluster(object):
                 1,
                 web_post_tl(),
                 self.bl_place,
-                -3,
+                -1,
                 0,
                 web_post_tl(),
             )
@@ -388,11 +388,11 @@ class DefaultCluster(object):
         shapes.append(
             wall_brace(
                 self.bl_place,
-                -3,
+                -1,
                 0,
                 web_post_tl(),
                 self.bl_place,
-                -3,
+                -1,
                 0,
                 web_post_bl(),
             )
@@ -501,7 +501,7 @@ class DefaultCluster(object):
             bottom_hull(
                 _triangle_hulls(
                     [
-                        self.mr_place(translate(web_post_br(), wall_locate3(0, -1))),
+                        self.mr_place(translate(web_post_br(), wall_locate1(0, -1))),
                         self.mr_place(
                             translate(web_post_br(), wall_locate3(0, -1, True))
                         ),
@@ -517,7 +517,10 @@ class DefaultCluster(object):
                             translate(web_post_br(), wall_locate3(0, -1)), 0, lastrow
                         ),
                         cluster_key_place(
-                            translate(web_post_br(), wall_locate3(0, -1, True)),
+                            translate(web_post_br(), wall_locate2(0, -1)), 0, lastrow
+                        ),
+                        cluster_key_place(
+                            translate(web_post_br(), wall_locate1(0, -1)),
                             0,
                             lastrow,
                         ),
@@ -581,7 +584,7 @@ class DefaultCluster(object):
                 [
                     self.tr_place(web_post_br()),
                     cluster_key_place(
-                        translate(web_post_br(), wall_locate3(0, -1)), 0, lastrow
+                        translate(web_post_br(), wall_locate1(0, -1)), 0, lastrow
                     ),
                     cluster_key_place(web_post_br(), 0, lastrow),
                 ]
