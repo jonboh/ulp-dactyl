@@ -1,6 +1,7 @@
 import getopt
 import importlib
 import json
+import math
 import os
 import os.path as path
 import subprocess
@@ -3034,7 +3035,7 @@ def make_dactyl():
             ]
         return rubber_feet
 
-    def base_rubber_feet_holes(side):
+    def tilter_rubber_feet_holes(side, wrist_rest: bool = False):
         rubber_feet_hole_depth = 1.64
         rubber_feet_radius = 4.25
         rubber_feet_hole = translate(
@@ -3042,14 +3043,130 @@ def make_dactyl():
             [0, 0, -base_thickness + rubber_feet_hole_depth / 2 - 0.01],
         )
         return [
-            translate(rubber_feet_hole, [-47, 19, 0]),
-            translate(rubber_feet_hole, [-75, -58, 0]),
-            translate(rubber_feet_hole, [-99, -19, 0])
+            translate(
+                rubber_feet_hole,
+                [
+                    -100,
+                    26,
+                    0,
+                ],
+            ),
+            translate(
+                rubber_feet_hole,
+                [
+                    -90,
+                    -90,
+                    0,
+                ],
+            ),
+            translate(
+                rubber_feet_hole,
+                [
+                    36,
+                    -122,
+                    0,
+                ],
+            )
+            if wrist_rest
+            else translate(
+                rubber_feet_hole,
+                [
+                    48,
+                    -67,
+                    0,
+                ],
+            ),
+            translate(
+                rubber_feet_hole,
+                [
+                    +48,
+                    6,
+                    0,
+                ],
+            ),
+            translate(
+                rubber_feet_hole,
+                [
+                    2,
+                    35,
+                    0,
+                ],
+            ),
+        ]
+
+    def base_rubber_feet_holes(side, projected_on_distance=0, projected_on_angle=0):
+        rubber_feet_hole_depth = 1.64
+        rubber_feet_radius = 4.25
+        rubber_feet_hole = translate(
+            cylinder(rubber_feet_radius, rubber_feet_hole_depth),
+            [0, 0, -base_thickness + rubber_feet_hole_depth / 2 - 0.01],
+        )
+        projected_on_angle = math.radians(projected_on_angle)
+        return [
+            translate(
+                rubber_feet_hole,
+                [
+                    +projected_on_distance
+                    + math.cos(projected_on_angle) * (-projected_on_distance + -47),
+                    19,
+                    0,
+                ],
+            ),
+            translate(
+                rubber_feet_hole,
+                [
+                    +projected_on_distance
+                    + math.cos(projected_on_angle) * (-projected_on_distance + -75),
+                    -58,
+                    0,
+                ],
+            ),
+            translate(
+                rubber_feet_hole,
+                [
+                    +projected_on_distance
+                    + math.cos(projected_on_angle) * (-projected_on_distance + -99),
+                    -19,
+                    0,
+                ],
+            )
             if side == "right"
-            else translate(rubber_feet_hole, [-60, -19, 0]),
-            translate(rubber_feet_hole, [42, -62, 0]),
-            translate(rubber_feet_hole, [42, -10, 0]),
-            translate(rubber_feet_hole, [2, 27, 0]),
+            else translate(
+                rubber_feet_hole,
+                [
+                    +projected_on_distance
+                    + math.cos(projected_on_angle) * (-projected_on_distance + -60),
+                    -19,
+                    0,
+                ],
+            ),
+            translate(
+                rubber_feet_hole,
+                [
+                    +projected_on_distance
+                    + math.cos(projected_on_angle) * (-projected_on_distance + 42),
+                    -62,
+                    0,
+                ],
+            ),
+            translate(
+                rubber_feet_hole,
+                [
+                    +projected_on_distance
+                    + math.cos(projected_on_angle) * (-projected_on_distance + 42),
+                    -10,
+                    0,
+                ],
+            ),
+            translate(
+                rubber_feet_hole,
+                [
+                    +projected_on_distance
+                    + math.cos(projected_on_angle) * (-projected_on_distance + 2),
+                    27,
+                    0,
+                ],
+            ),
         ]
 
     def _simple_baseplate(side):
@@ -3254,15 +3371,13 @@ def make_dactyl():
 
         outer_base = s.union()(s.up(base_thickness)(outer_base), outer_base)
         holder = s.cube(40, 60, 20, center=True)
-        holder = s.down(base_thickness / 2)(place_usb_holder_w_reset(holder))
+        holder = place_usb_holder_w_reset(holder)
         outer_base = s.difference()(outer_base, holder)
         top = s.difference()(outer_base, s.up(base_thickness)(inner_base))
-        top = s.difference()(
-            top, s.up(base_thickness - 1)(base_rubber_feet_holes(side))
-        )
+        # top = s.difference()(top, s.up(base_thickness)(base_rubber_feet_holes(side)))
         base = s.union()(baseplate, tilter_notch(hole=False))
         shape = s.down(base_thickness)(mirror(base, "XY"))
-        rotation = 45
+        rotation = 30
         centering = 56.5
 
         def position(x):
@@ -3280,12 +3395,46 @@ def make_dactyl():
         )
 
         shape = s.union()(shape, top, projection)
-        shape = s.difference()(shape, s.down(200)(s.cube(400, center=True)))
+        # shape = projection
         shape = s.right(centering)(shape)
 
-        shape = s.difference()(
-            shape, s.up(base_thickness)(s.union()(base_rubber_feet_holes(side)))
+        shape = s.union()(
+            shape,
+            s.hull()(
+                s.translate([-40, -22.5, 35 / 2])(
+                    s.rotate([0, 0, -5])(s.cube([5, 110, 35], center=True))
+                ),
+                s.translate([-100, -32.5, 5 / 2])(
+                    s.rotate([0, 0, 5])(s.cube([2.5, 130, 5], center=True))
+                ),
+            ),
         )
+        wrist_rest = False
+        if wrist_rest:
+            shape = s.union()(
+                shape,
+                s.hull()(
+                    s.translate([45, -100, 2.5 / 2])(
+                        s.rotate([0, 0, -7.5])(s.cube([5, 60, 2.5], center=True))
+                    ),
+                    s.translate([20, -80, 14 / 2])(
+                        s.rotate([7.5, 0, 10])(s.cube([5, 80, 14], center=True))
+                    ),
+                    s.translate([-10, -50, 18 / 2])(
+                        s.rotate([0, 0, -60])(s.cube([5, 20, 18], center=True))
+                    ),
+                    s.translate([40, -130, 2.5 / 2])(
+                        s.cube([2.5, 2.5, 2.5], center=True)
+                    ),
+                    s.translate([5, -130, 2.5 / 2])(
+                        s.cube([2.5, 2.5, 2.5], center=True)
+                    ),
+                ),
+            )
+        shape = s.difference()(
+            shape, s.up(base_thickness)(tilter_rubber_feet_holes(side, wrist_rest))
+        )
+        shape = s.difference()(shape, s.down(200)(s.cube(400, center=True)))
         if side == "left":
             shape = mirror(shape, "YZ")
         return shape
@@ -3375,18 +3524,29 @@ def make_dactyl():
         # keyboard_hole = s.left(32.5)(s.forward(22.5)(
         #     s.hull()(keyboard)))
         if side == "left":
-            centering = lambda x: s.left(32.5)(s.forward(22.5)(x))
+            centering = lambda x: s.left(37.5)(s.forward(22.5)(x))
         else:
             centering = lambda x: s.right(27.5)(s.forward(22.5)(x))
         base_hole = centering(s.hull()(base))
         keyboard_hole = centering(s.hull()(keyboard))
-        keyboard_hole = s.union()(keyboard_hole, base_hole)
+        keyboard_hole_1 = centering(
+            s.hull()(
+                s.down(plate_insert_height + plate_insert_height_screw_tolerance + 1)(
+                    keyboard
+                )
+            )
+        )
+        keyboard_hole = s.union()(
+            keyboard_hole,
+            keyboard_hole_1,
+            base_hole,
+        )
 
         if wire_box:
             keyboard_hole = s.union()(
                 keyboard_hole,
                 s.up(20)(
-                    s.right(68)(
+                    s.right(72)(
                         s.forward(12.5)(
                             (s.rotate([0, 0, 20])(round_cube(50, 90, 45, 15, _fn)))
                         )
@@ -3460,34 +3620,34 @@ def make_dactyl():
 
         # Centering columns
         columns_radius = 7
-        cylinder_hole = s.down(0.01)(s.cylinder(h=10, r=columns_radius + 0.25, _fn=_fn))
-        cylinder = s.cylinder(h=5, r=columns_radius - 0.5, _fn=_fn)
+        cylinder_hole = s.down(0.01)(s.cylinder(h=10, r=columns_radius, _fn=_fn))
+        cylinder = s.cylinder(h=5, r=columns_radius - 0.35, _fn=_fn)
 
         if side == "left":
             cyl_place = lambda cylinder: s.union()(
-                s.right(87)(s.back(50)(cylinder)),
-                s.right(87)(s.forward(50)(cylinder)),
-                s.left(87)(s.forward(50)(cylinder)),
+                s.right(97)(s.back(50)(cylinder)),
+                s.right(97)(s.forward(50)(cylinder)),
+                s.left(97)(s.forward(50)(cylinder)),
             )
         else:
             cyl_place = lambda cylinder: s.union()(
-                s.left(80)(s.back(50)(cylinder)),
-                s.right(80)(s.forward(50)(cylinder)),
-                s.left(80)(s.forward(50)(cylinder)),
+                s.left(85)(s.back(50)(cylinder)),
+                s.right(85)(s.forward(50)(cylinder)),
+                s.left(85)(s.forward(50)(cylinder)),
             )
 
         feet = s.union()(
-            s.down(z_bottom - 0.01)(
-                s.right(80)(s.back(50)(s.cylinder(h=2, d=11, _fn=_fn)))
+            s.down(z_bottom + 0.01)(
+                s.right(85)(s.back(50)(s.cylinder(h=2, d=11, _fn=_fn)))
             ),
-            s.down(z_bottom - 0.01)(
-                s.left(80)(s.back(50)(s.cylinder(h=2, d=11, _fn=_fn)))
+            s.down(z_bottom + 0.01)(
+                s.left(85)(s.back(50)(s.cylinder(h=2, d=11, _fn=_fn)))
             ),
-            s.down(z_bottom - 0.01)(
-                s.left(80)(s.forward(50)(s.cylinder(h=2, d=11, _fn=_fn)))
+            s.down(z_bottom + 0.01)(
+                s.left(85)(s.forward(50)(s.cylinder(h=2, d=11, _fn=_fn)))
             ),
-            s.down(z_bottom - 0.01)(
-                s.right(80)(s.forward(50)(s.cylinder(h=2, d=11, _fn=_fn)))
+            s.down(z_bottom + 0.01)(
+                s.right(85)(s.forward(50)(s.cylinder(h=2, d=11, _fn=_fn)))
             ),
         )
 
@@ -3500,10 +3660,10 @@ def make_dactyl():
     def make_case_left():
         _fn = 100
         radius = 15
-        x_width = 215
+        x_width = 225
         y_width = 140
         z_top = 47.5
-        z_bottom = 6
+        z_bottom = 10
         band_depth = 4
         band_width = 20.5
         case_top, case_bottom = _make_case(
@@ -3523,10 +3683,10 @@ def make_dactyl():
     def make_case_right():
         _fn = 100
         radius = 15
-        x_width = 205
+        x_width = 215
         y_width = 140
         z_top = 47.5
-        z_bottom = 6
+        z_bottom = 10
         band_depth = 4
         band_width = 20.5
         case_top, case_bottom = _make_case(
