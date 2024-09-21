@@ -1,6 +1,8 @@
 # ULP Dactyl
 This repository has my last keyboard. The ULP Dactyl, that uses the Cherry Ultra Low Profile switches
 
+
+
 ![ULP Dactyl](./assets/ulp_dactyl.jpeg)
 
 You can find out more about these switches in the [Cherry_MX_ULP](https://github.com/pashutk/Cherry_MX_ULP).
@@ -72,6 +74,29 @@ The left side has a cavity in which any moderately sized wire set for your keybo
 
  ![](./assets/cases_closed.jpeg) |  ![](./assets/single_case.jpeg) | ![](./assets/case_upsidedown.jpeg)
 -------------------------|-------------------------|----------
+
+## Modular Tenting
+In the latest version of the ULP Dactyl I've modified the baseplates to attach to independent tenting
+blocks. These blocks can be printed in whichever angle is desired. I tried several ones before settling in
+30 degrees.
+
+Having these as independent pieces allows me to use the keyboard at home with the tenting blocks but still
+be able to transport the keyboard in a backpack with the transport boxes.
+
+The tenting blocks are not very visually pleasing but they are robust and big enough to prevent any wobbliness while typing.
+
+ ![](./assets/tented_keyboard.jpg) |  ![](./assets/tented_keyboard_detached.jpg) | ![](./assets/tented_baseplate.jpg)
+-------------------------|-------------------------|-------------------------
+
+## Curved Keycaps
+I slightly modified the [mask-2.0 keyboard](https://www.reddit.com/r/ErgoMechKeyboards/comments/zpo9h6/mask200_4x6_split_keyboard_with_cherry_mxulp_keys/) to improve its printability in an FDM machine, here is the [modified version](https://cad.onshape.com/documents/dfaf8d79420dde45cf8fb191/w/b0ef117490f8673340884607/e/e0e10a657b3c8b12c6dd78b3?renderMode=0&uiState=66ef06166dc6556882898d02).
+I print them with a 0.12 layer height and then smooth them out with a bit of sand paper. You can use the model defined in `src/ulp_keycap_sanding.py` to ease that job.
+
+The result is surprisingly good (taken there isn't really any buyable keycap for these switches)
+
+ ![](./assets/keycap_1.png) |  ![](./assets/keycap_2.png) | ![](./assets/ulp_keycap_sander.png)
+-------------------------|------------------------|-------------------------
+
 
 ## Running the configuration
 I've made a Nix Flake with the needed Python interpreter to generate the keyboard.
