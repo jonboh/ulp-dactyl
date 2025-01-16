@@ -56,7 +56,7 @@ with the heat or you could detach the switch on the front.
 
 
 ## Trackball
-The trackball uses Rexroth BTUs `REXROTH R053010810`. I bought them from [rodavigo](rodavigo.net) but they should
+The trackball uses Rexroth BTUs `REXROTH R053010810`. I bought them from [rodavigo](https://rodavigo.net/es) but they should
 be available in other stores.
 
 I started out using static ceramic bearings, but the BTUs roll much better with almost no static friction (even after a lot of use).
