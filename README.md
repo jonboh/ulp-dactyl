@@ -1,17 +1,22 @@
 # ULP Dactyl
-This repository has my last keyboard. The ULP Dactyl, that uses the Cherry Ultra Low Profile switches
+This repository has my last keyboard. The ULP Dactyl, that uses the Cherry Ultra Low Profile switches or Kailh PG1316S.
+You can use either, using my single PCBs:
+- [Cherry ULP](https://github.com/jonboh/amoeba-cherry-ulp)
+- [Kailh PG1316S](https://github.com/jonboh/amoeba-kailh-pg1316S)
 
+You should be able to order them in
+any pcb manufacturer like EuroCircuits or JLPCB.
+The diodes used in the PCBs are `1N4148W SOD323`.
 
+I recommend using the Kailh switches as they have a low force version (35 gf). My main problem with this keyboard up until these switches were generally available was that the Cherry ULP was extremely stiff.
 
-![ULP Dactyl](./assets/ulp_dactyl.jpeg)
+![ULP Dactyl](./assets/ulp_dactly.jpeg)
 
 You can find out more about these switches in the [Cherry_MX_ULP](https://github.com/pashutk/Cherry_MX_ULP).
 
-I bought the switches from [Reichelt](https://www.reichelt.de/de/en/cherry-mx-ultra-low-profile-rgb-pushbutton-module-cherry-mx6c-k3nb-p335040.html), they have both clicky and tactile variant.
+In the case of the Cherry version I bought the switches from [Reichelt](https://www.reichelt.de/de/en/cherry-mx-ultra-low-profile-rgb-pushbutton-module-cherry-mx6c-k3nb-p335040.html), they have both clicky and tactile variant.
 
-You can find the PCBs I designed for the keyboard [here](https://github.com/jonboh/amoeba-cherry-ulp). You should be able to order them in
-any pcb manufacturer like EuroCircuits or JLPCB.
-The diodes used in the PCBs are `1N4148W SOD323`.
+In the case of the Kailh version I bought them from [Keycapsss](https://keycapsss.com/Kailh-PG1316S-Ultra-Thin-Notebook-Switch/KC10231-35). They have 35 and 60 gf versions. I strongly recommend the 35 version.
 
 Regarding the model, lot of the features of the original dactyl manuform repository no longer work as I've focused on using just solidpython2
 and I've hacked away wherever I needed.
@@ -27,7 +32,7 @@ Finally I just settled for mounting the pcbs on the surface of the shell. Althou
 strictly necessary you'll want to add a bit of glue on the bottom of the PCBs so they stay in place.
 
 Depending on the tolerance of your printer you might want to have a bit of sanding paper to
-sand the corners and edges of your pcbs so that the fit.
+sand the corners and edges of your pcbs so that they fit.
 
 ![soldering](./assets/soldering.jpeg) | ![soldering](./assets/soldering_finished.jpeg) | ![mounted](./assets/finished.jpeg)
 |--------------|-----------|------------|
@@ -53,6 +58,7 @@ paste, as it can flow inside the switch itself and ruin it.
 When you are done with the switch you can solder the diode on the back. The diodes 1N4148W SOD323 are quite
 small, I used the hot air gun again for these, although you have again to be quick and not over do it
 with the heat or you could detach the switch on the front.
+In my latest build I used the hot air gun just for the switch, the diode can be done with tweezers and a soldering iron.
 
 
 ## Trackball
@@ -67,7 +73,7 @@ made a pair of boxes to transport the keyboard.
 
 They are tight enough to prevent the keyboard from moving around
 inside the case, but loose enough to not actually press any switch when closed.
-The left side has a cavity in which any moderately sized wire set for your keyboard should enter.
+The left side has a cavity in which any moderately sized wire set for your keyboard should fit.
 
  ![](./assets/left_open.jpeg) |  ![](./assets/right_open.jpeg)
 -------------------------|-------------------------
@@ -75,8 +81,14 @@ The left side has a cavity in which any moderately sized wire set for your keybo
  ![](./assets/cases_closed.jpeg) |  ![](./assets/single_case.jpeg) | ![](./assets/case_upsidedown.jpeg)
 -------------------------|-------------------------|----------
 
+## Mounting with 1/4" arms
+In the latest version I've modified the baseplate to use an insert to which to attach a smallrig arm.
+Setting it up and dismounting the keyboard is a bit of a pain, so if you are constantly changing places you might want to pass. This mounting option is inspired in the mounting of the [Svalboard](https://svalboard.com/).
+ ![under_desk](./assets/under_desk.jpeg) |  ![baseplate_arm](./assets/baseplate_arm.jpg)
+-------------------------|-------------------------
+
 ## Modular Tenting
-In the latest version of the ULP Dactyl I've modified the baseplates to attach to independent tenting
+In one of the versions of the ULP Dactyl I've modified the baseplates to attach to independent tenting
 blocks. These blocks can be printed in whichever angle is desired. I tried several ones before settling in
 30 degrees.
 
@@ -85,14 +97,16 @@ be able to transport the keyboard in a backpack with the transport boxes.
 
 The tenting blocks are not very visually pleasing but they are robust and big enough to prevent any wobbliness while typing.
 
- ![](./assets/tented_keyboard.jpg) |  ![](./assets/tented_keyboard_detached.jpg) | ![](./assets/tented_baseplate.jpg)
+ ![tented_keyboard](./assets/tented_keyboard.jpg) |  ![tented_keyboard_detached](./assets/tented_keyboard_detached.jpg) | ![tented_baseplate](./assets/tented_baseplate.jpg)
 -------------------------|-------------------------|-------------------------
 
 ## Curved Keycaps
+NOTE: you can now buy blank ones from Kailh
+
 I slightly modified the [mask-2.0 keyboard](https://www.reddit.com/r/ErgoMechKeyboards/comments/zpo9h6/mask200_4x6_split_keyboard_with_cherry_mxulp_keys/) to improve its printability in an FDM machine, here is the [modified version](https://cad.onshape.com/documents/dfaf8d79420dde45cf8fb191/w/b0ef117490f8673340884607/e/e0e10a657b3c8b12c6dd78b3?renderMode=0&uiState=66ef06166dc6556882898d02).
 I print them with a 0.12 layer height and then smooth them out with a bit of sand paper. You can use the model defined in `src/ulp_keycap_sanding.py` to ease that job.
 
-The result is surprisingly good (taken there isn't really any buyable keycap for these switches)
+The result is surprisingly good ~(taken there isn't really any buyable keycap for these switches)~ (not any more! you can buy [Kailh ones](https://keycapsss.com/Kailh-PG1316S-Keycaps/KC10237-1U-BK) :D)
 
  ![](./assets/keycap_1.png) |  ![](./assets/keycap_2.png) | ![](./assets/ulp_keycap_sander.png)
 -------------------------|------------------------|-------------------------
