@@ -3280,7 +3280,23 @@ def make_dactyl():
         # base = union([base, backplate(side=side)])
         return base
 
-    def baseplate(side="right"):
+    def arm_insert_block():
+        centering_hole = s.cylinder(h=100, r=1.7, center=True, _fn=100)
+        cutter = s.union()(
+            s.cylinder(h=100, r=4.6, center=True, _fn=100),
+            s.left(7.5)(centering_hole),
+            s.right(7.5)(centering_hole),
+        )
+        return (
+            s.up(3.75)(
+                s.difference()(
+                    s.cube([20, 15, 7.5], center=True),
+                )
+            ),
+            cutter,
+        )
+
+    def baseplate(side="right", cut_tilter_notch=True, add_arm_insert=False):
         base = _baseplate(side)
         if cluster(side).is_tb:
             _, tb, tbcutout, _, _ = generate_trackball_in_cluster(cluster(side))
@@ -3292,7 +3308,17 @@ def make_dactyl():
             )
             tb = difference(tb, [floor])
             base = union([base, tb])
-        base = s.difference()(base, tilter_notch(hole=True))
+        if cut_tilter_notch:
+            base = s.difference()(base, tilter_notch(hole=True))
+        if add_arm_insert:
+            insert_block, cutter = map(
+                lambda sh: s.translate([-25, -15, 0])(sh),
+                arm_insert_block(),
+            )
+            base = s.difference()(
+                s.union()(base, insert_block),
+                cutter,
+            )
         return base
 
     def tilter_notch(hole: bool):
@@ -3727,12 +3753,25 @@ def make_dactyl():
 
     def run():
         # make_keycaps()
+        base_arm_r = baseplate(
+            side="right", cut_tilter_notch=False, add_arm_insert=True
+        )
+        export_file(
+            shape=base_arm_r,
+            fname=path.join(save_path, config_name + r"_right_plate_arm"),
+        )
+        base_arm_l = mirror(
+            baseplate(side="left", cut_tilter_notch=False, add_arm_insert=True), "YZ"
+        )
+        export_file(
+            shape=base_arm_l,
+            fname=path.join(save_path, config_name + r"_left_plate_arm"),
+        )
         mod_r, walls_r = model_side(side="right")
         export_file(shape=mod_r, fname=path.join(save_path, config_name + r"_right"))
         mod_l, walls_l = model_side(side="left")
         export_file(shape=mod_l, fname=path.join(save_path, config_name + r"_left"))
         base_l = mirror(baseplate(side="left"), "YZ")
-        # base_l = s.union()(base_l, mod_l)
         export_file(
             shape=base_l, fname=path.join(save_path, config_name + r"_left_plate")
         )
