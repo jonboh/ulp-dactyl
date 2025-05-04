@@ -3321,6 +3321,61 @@ def make_dactyl():
             )
         return base
 
+    def touchpad_place(sh):
+        return s.translate([-8, -71, 3 - plate_thickness / 2])(sh)
+
+    def touchpad_surface(side="right"):
+        tool = s.down(plate_insert_height / 2 + 1)(
+            s.union()(*screw_insert_holes(side=side), *baseplate_holes(side=side))
+        )
+        plate = s.translate([-20, -62.5, 0])(
+            s.cube([120, 65, plate_thickness + 2], center=True)
+        )
+        shape = s.difference()(plate, tool)
+        ring_rotation = lambda sh: s.rotateY(15)(s.rotateX(15)(sh))
+
+        touchpad_height = 22
+        touchpad_ring = ring_rotation(
+            s.difference()(
+                s.cylinder(h=4, d=45, center=True, _fn=100),
+                s.up(1.75)(s.cylinder(h=2.01, d=40.25, center=True, _fn=100)),
+                s.cylinder(h=4.01, d=38, center=True, _fn=100),
+            )
+        )
+        touchpad_tower = s.union()(
+            s.difference()(
+                s.union()(
+                    s.linear_extrude(height=touchpad_height)(
+                        s.projection()(touchpad_ring)
+                    ),
+                    s.down(touchpad_height)(
+                        s.linear_extrude(height=touchpad_height)(
+                            s.projection()(touchpad_ring)
+                        )
+                    ),
+                ),
+                ring_rotation(s.up(50)(s.cube(100, center=True))),
+            ),
+            touchpad_ring,
+        )
+        touchpad_tower = touchpad_place(s.up(touchpad_height)(touchpad_tower))
+        shape = s.union()(shape, touchpad_tower)
+        touchpad_hole = s.union()(
+            s.down(10)(s.cylinder(h=25, d=30, center=True, _fn=100)),
+            s.rotateZ(35)(s.translateY(30)(s.cube([30, 60, 6], center=True))),
+        )
+        shape = s.difference()(shape, touchpad_place(touchpad_hole))
+        shape = s.difference()(
+            shape,
+            s.translate([0, -150, 0])(
+                s.rotateZ(30)(s.cube([200, 100, 100], center=True))
+            ),
+            s.translate([0, -150, 0])(
+                s.rotateZ(-19)(s.cube([300, 100, 100], center=True))
+            ),
+        )
+        return shape
+
     def tilter_notch(hole: bool):
         width = base_thickness
         height = 3 * base_thickness / 4
@@ -3753,8 +3808,21 @@ def make_dactyl():
 
     def run():
         # make_keycaps()
+        touchpad_r = touchpad_surface(side="right")
+        export_file(
+            shape=touchpad_r,
+            fname=path.join(save_path, config_name + r"_touchpad_right"),
+        )
         base_arm_r = baseplate(
             side="right", cut_tilter_notch=False, add_arm_insert=True
+        )
+        base_arm_r = s.difference()(
+            base_arm_r,
+            touchpad_place(
+                s.down(plate_thickness / 2)(
+                    s.rotateZ(35)(s.translateY(24)(s.cube([30, 48, 6], center=True)))
+                ),
+            ),
         )
         export_file(
             shape=base_arm_r,
