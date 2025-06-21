@@ -251,7 +251,7 @@
   "plate_holes_depth": 20.0,
   "pcb_width": 18.2,
   "pcb_height": 16.6,
-  "pcb_thickness": 1.2,
+  "pcb_thickness": 1.6,
   "pcb_hole_diameter": 2,
   "column_offsets": [
     [
@@ -312,7 +312,7 @@
       0
     ],
     [
-      -85,
+      -90,
       20,
       0
     ],

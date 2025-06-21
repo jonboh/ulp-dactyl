@@ -3018,7 +3018,7 @@ def make_dactyl():
             translate(rubber_feet_hole, [-76, -75, 0]),  # thumb back
             translate(rubber_feet_hole, [-110.5, -5, 0])  # thumb front
             if side == "right"
-            else translate(rubber_feet_hole, [-79, -24, 0]),
+            else translate(rubber_feet_hole, [-76, -25, 0]),
             translate(rubber_feet_hole, [32, 25, 0]),  # anular front
             translate(rubber_feet_hole, [52.25, -68.25, 0]),  # pinky front
             translate(rubber_feet_hole, [56, 3.5, 0]),  # pinky back
@@ -3030,8 +3030,8 @@ def make_dactyl():
         if side == "left":
             rubber_feet += [
                 translate(rubber_feet_hole, [-61, 20, 0]),
-                translate(rubber_feet_hole, [-61.5, 13.5, 0]),
-                translate(rubber_feet_hole, [-61.5, 7, 0]),
+                translate(rubber_feet_hole, [-66.5, 13.5, 0]),
+                translate(rubber_feet_hole, [-71.5, 7, 0]),
             ]
         return rubber_feet
 
@@ -3550,7 +3550,7 @@ def make_dactyl():
         # keyboard_hole = s.left(32.5)(s.forward(22.5)(
         #     s.hull()(keyboard)))
         if side == "left":
-            centering = lambda x: s.left(37.5)(s.forward(22.5)(x))
+            centering = lambda x: s.left(47.5)(s.forward(22.5)(x))
         else:
             centering = lambda x: s.right(27.5)(s.forward(22.5)(x))
         base_hole = centering(s.hull()(base))
@@ -3572,7 +3572,7 @@ def make_dactyl():
             keyboard_hole = s.union()(
                 keyboard_hole,
                 s.up(20)(
-                    s.right(72)(
+                    s.right(73)(
                         s.forward(12.5)(
                             (s.rotate([0, 0, 20])(round_cube(50, 90, 45, 15, _fn)))
                         )
@@ -3651,9 +3651,9 @@ def make_dactyl():
 
         if side == "left":
             cyl_place = lambda cylinder: s.union()(
-                s.right(97)(s.back(50)(cylinder)),
-                s.right(97)(s.forward(50)(cylinder)),
-                s.left(97)(s.forward(50)(cylinder)),
+                s.right(101)(s.back(50)(cylinder)),
+                s.right(101)(s.forward(50)(cylinder)),
+                s.left(101)(s.forward(50)(cylinder)),
             )
         else:
             cyl_place = lambda cylinder: s.union()(
@@ -3686,7 +3686,7 @@ def make_dactyl():
     def make_case_left():
         _fn = 100
         radius = 15
-        x_width = 225
+        x_width = 240
         y_width = 140
         z_top = 47.5
         z_bottom = 10

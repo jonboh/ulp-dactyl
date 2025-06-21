@@ -7,6 +7,7 @@ class DefaultCluster(object):
     is_tb = False
     thumb_pos_offsets = [-9, 12, 18.5]
     thumb_rot_offset = [0, -35, 0]
+    thumb_plate_te_rotation = 0
     thumb_plate_tr_rotation = 0
     thumb_plate_tl_rotation = 0
     thumb_plate_mr_rotation = 0
@@ -70,6 +71,14 @@ class DefaultCluster(object):
     def thumb_place(self, shape):
         return translate(rotate(shape, self.thumb_rotate()), self.thumborigin())
 
+    def te_place(self, shape):
+        debugprint("t2_place()")
+        shape = translate(shape, [-8.5, 18, -1])
+        shape = rotate(shape, [47.5, -18, 15])
+        shape = translate(shape, [-32.5, 0, 15])
+        shape = self.thumb_place(shape)
+        return shape
+
     def tl_place(self, shape):
         debugprint("tl_place()")
         shape = rotate(shape, [27.5, -18, 12])
@@ -129,6 +138,7 @@ class DefaultCluster(object):
             self.bl_place(rotate(shape, [0, 0, self.thumb_plate_bl_rotation])),
             self.tr_place(rotate(shape, [0, 0, self.thumb_plate_tr_rotation])),
             self.tl_place(rotate(shape, [0, 0, self.thumb_plate_tl_rotation])),
+            self.te_place(rotate(shape, [0, 0, self.thumb_plate_te_rotation])),
         ]
         return shapes
 
@@ -260,12 +270,38 @@ class DefaultCluster(object):
         )
         hulls += _triangle_hulls(
             [
+                self.tl_place(web_post_bl()),
+                self.tl_place(web_post_tl()),
+                self.ml_place(web_post_tr()),
+                # self.te_place(web_post_tl()),
+                # self.te_place(web_post_bl()),
+            ]
+        )
+        hulls += _triangle_hulls(
+            [
+                self.te_place(web_post_bl()),
+                self.te_place(web_post_tl()),
+                self.ml_place(web_post_tl()),
+            ]
+        )
+        hulls += _triangle_hulls(
+            [
                 self.mr_place(web_post_tr()),
                 self.ml_place(web_post_br()),
                 self.mr_place(web_post_tl()),
                 self.ml_place(web_post_bl()),
                 self.bl_place(web_post_tr()),
                 self.bl_place(web_post_tl()),
+            ]
+        )
+        hulls += _triangle_hulls(
+            [
+                self.te_place(web_post_tr()),
+                self.te_place(web_post_br()),
+                self.tl_place(web_post_tr()),
+                self.tl_place(web_post_tl()),
+                # self.te_place(web_post_tl()),
+                # self.ml_place(web_post_tl()),
             ]
         )
         hulls += _triangle_hulls(
@@ -327,46 +363,34 @@ class DefaultCluster(object):
 
         shapes.append(
             wall_brace(
+                (lambda sh: left_key_place(sh, 0, 1, side=side)),
+                0,
+                1,
+                web_post(),
+                (lambda sh: left_key_place(sh, 0, 1, side=side)),
+                -1,
+                0,
+                web_post(),
+            )
+        )
+        shapes.append(
+            wall_brace(
                 lambda sh: left_key_place(sh, 0, 1, side=side),
                 -1,
                 0,
                 web_post(),
-                lambda sh: left_key_place(sh, 0, -1, low_corner=True, side=side),
-                -1,
+                self.te_place,
                 0,
-                web_post(),
+                1,
+                web_post_tl(),
             )
         )
         shapes.append(
             wall_brace(
-                (lambda sh: left_key_place(sh, 0, 1, side=side)),
+                self.te_place,
                 0,
                 1,
-                web_post(),
-                (lambda sh: left_key_place(sh, 0, 1, side=side)),
-                -1,
-                0,
-                web_post(),
-            )
-        )
-        shapes.append(
-            wall_brace(
-                lambda sh: left_key_place(sh, 0, -1, low_corner=True, side=side),
-                -1,
-                0,
-                web_post(),
-                self.ml_place,
-                -2,
-                1,
-                web_post_tr(),
-            )
-        )
-        shapes.append(
-            wall_brace(
-                self.ml_place,
-                -2,
-                1,
-                web_post_tr(),
+                web_post_tl(),
                 self.ml_place,
                 -2,
                 1,
@@ -549,23 +573,30 @@ class DefaultCluster(object):
         shapes.append(
             triangle_hulls(
                 [
-                    key_place(web_post_bl(), 0, 1),
-                    key_place(web_post_bl(), 0, 0),
-                    self.tl_place(web_post_tr()),
-                    left_key_place(web_post(), 0, -1, low_corner=True, side=side),
-                    self.tl_place(web_post_tl()),
-                ]
-            )
-        )
-        shapes.append(
-            triangle_hulls(
-                [
                     cluster_key_place(web_post_br(), 3, lastrow),
                     self.br_place(web_post_tl()),
                     cluster_key_place(web_post_bl(), 4, lastrow),
                     self.br_place(web_post_tr()),
                     cluster_key_place(web_post_br(), 4, lastrow),
                     self.br_place(web_post_br()),
+                ]
+            )
+        )
+        shapes.append(
+            triangle_hulls(
+                [
+                    cluster_key_place(web_post_br(), 1, cornerrow),
+                    cluster_key_place(web_post_bl(), 2, cornerrow),
+                    cluster_key_place(web_post_br(), 2, cornerrow),
+                ]
+            )
+        )
+        shapes.append(
+            triangle_hulls(
+                [
+                    cluster_key_place(web_post_br(), 1, cornerrow),
+                    cluster_key_place(web_post_br(), 2, cornerrow),
+                    cluster_key_place(web_post_bl(), 3, cornerrow),
                 ]
             )
         )
@@ -593,28 +624,21 @@ class DefaultCluster(object):
         shapes.append(
             triangle_hulls(
                 [
-                    cluster_key_place(web_post_br(), 1, cornerrow),
-                    cluster_key_place(web_post_bl(), 2, cornerrow),
-                    cluster_key_place(web_post_br(), 2, cornerrow),
+                    key_place(web_post_bl(), 0, 1),
+                    key_place(web_post_bl(), 0, 0),
+                    self.tl_place(web_post_tr()),
+                    self.te_place(web_post_tr()),
+                    key_place(web_post_bl(), 0, 0),
+                    left_key_place(web_post(), 0, 1, low_corner=True, side=side),
                 ]
             )
         )
         shapes.append(
             triangle_hulls(
                 [
-                    cluster_key_place(web_post_br(), 1, cornerrow),
-                    cluster_key_place(web_post_br(), 2, cornerrow),
-                    cluster_key_place(web_post_bl(), 3, cornerrow),
-                ]
-            )
-        )
-        shapes.append(
-            triangle_hulls(
-                [
-                    self.ml_place(web_post_br()),
-                    self.ml_place(web_post_tr()),
-                    self.tl_place(web_post_tl()),
-                    left_key_place(web_post(), 0, -1, low_corner=True, side=side),
+                    self.te_place(web_post_tr()),
+                    self.te_place(web_post_tl()),
+                    left_key_place(web_post(), 0, 1, low_corner=True, side=side),
                 ]
             )
         )
@@ -624,7 +648,6 @@ class DefaultCluster(object):
                     key_place(web_post_tl(), 0, 0),
                     key_place(web_post_bl(), 0, 0),
                     left_key_place(web_post(), 0, 1, low_corner=True, side=side),
-                    left_key_place(web_post(), 0, -1, low_corner=True, side=side),
                 ]
             )
         )
