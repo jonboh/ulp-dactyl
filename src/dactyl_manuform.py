@@ -3281,7 +3281,14 @@ def make_dactyl():
         return base
 
     def arm_insert_block():
-        centering_hole = s.cylinder(h=100, r=1.7, center=True, _fn=100)
+        centering_hole = s.cylinder(h=100, d=3.4, center=True, _fn=100)
+        insert_hole_height = 6.5
+        centering_insert_hole = s.cylinder(
+            h=insert_hole_height, d=3.75, center=True, _fn=100
+        )
+        centering_hole = s.union()(
+            centering_hole, s.up(insert_hole_height / 2)(centering_insert_hole)
+        )
         cutter = s.union()(
             s.cylinder(h=100, r=4.6, center=True, _fn=100),
             s.left(7.5)(centering_hole),
@@ -3295,6 +3302,9 @@ def make_dactyl():
             ),
             cutter,
         )
+
+    def place_arm_keyboard_insert_block(insert_block):
+        return s.translate([-25, -15, 0])(insert_block)
 
     def baseplate(side="right", cut_tilter_notch=True, add_arm_insert=False):
         base = _baseplate(side)
@@ -3312,12 +3322,12 @@ def make_dactyl():
             base = s.difference()(base, tilter_notch(hole=True))
         if add_arm_insert:
             insert_block, cutter = map(
-                lambda sh: s.translate([-25, -15, 0])(sh),
+                place_arm_keyboard_insert_block,
                 arm_insert_block(),
             )
             base = s.difference()(
                 s.union()(base, insert_block),
-                cutter,
+                s.down(plate_thickness)(cutter),
             )
         return base
 
@@ -3751,26 +3761,126 @@ def make_dactyl():
         z_axis = arrow(length, s.color([0, 0, 1]))
         return s.union()(x_axis, y_axis, z_axis)
 
+    def palm_rest_connectors():
+        shape = s.cube([40, 40, 1.0], center=True)
+        cutter = s.translateX(7.5)(s.cylinder(h=100, r=1.7, center=True, _fn=100))
+        bottom = s.difference()(shape, cutter, s.mirrorX()(cutter))
+
+        top = s.cube([27.5, 20, 3.5], center=True)
+        insert_hole = s.cylinder(h=100, d=4.15, center=True, _fn=50)
+        top = s.difference()(
+            top,
+            s.translateX(7.5)(insert_hole),
+            s.translateX(-7.5)(insert_hole),
+        )
+        return top, bottom
+
+    def palm_rest_base(side="right"):
+        palm_rest_base_height = 6
+        nut_hole_depth = 3.75
+        nut_height = 2.5
+        nut_width = 6.5
+        p = s.cube([1, 1, palm_rest_base_height], center=True)
+        back = s.cube([70, 1, palm_rest_base_height], center=True)
+        base = s.hull()(
+            s.translate(-25, 0, 0)(p),
+            s.translate(0, -10, 0)(p),
+            s.translate(-50, -10, 0)(p),
+            s.translate(0, -80, 0)(back),
+            s.translate(0, -160, 0)(back),
+        )
+        screw_palmrest = s.cylinder(h=nut_hole_depth, d=3.25, center=True, _fn=50)
+        screw_hole = s.hull()(
+            s.translateY(30)(screw_palmrest),
+            s.translateY(-30)(screw_palmrest),
+        )
+        nut_casing_hole = s.union()(
+            s.translateY(30 + nut_width)(
+                s.cube([nut_width, nut_width, nut_hole_depth], center=True)
+            ),
+            s.translate(0, nut_width / 2, -nut_hole_depth / 2 + nut_height / 2)(
+                s.cube([nut_width, 60 + 2 * nut_width, nut_height], center=True)
+            ),
+            screw_hole,
+        )
+
+        place_nut_casing_hole = lambda sh: s.translate(
+            0, -120, palm_rest_base_height / 2 - nut_hole_depth / 2 + 0.1
+        )(sh)
+
+        _, insert_hole_cutter = arm_insert_block()
+        insert_hole_rotation = s.rotate(45)(
+            s.rotate_extrude(angle=-120, _fn=50)(
+                s.projection()(
+                    s.translate(7.5, 0, 0)(
+                        s.rotateX(90)(s.cylinder(h=100, r=1.7, center=True, _fn=100))
+                    )
+                )
+            )
+        )
+        base = s.difference()(
+            base,
+            place_nut_casing_hole(nut_casing_hole),
+            place_arm_keyboard_insert_block(insert_hole_rotation),
+            place_arm_keyboard_insert_block(
+                s.mirrorY()(s.mirrorX()(insert_hole_rotation))
+            ),
+            s.translate(-10, -65, 0)(insert_hole_cutter),
+            # s.up(3.1)(wall_rubber_feet_holes(side)),
+        )
+
+        place_base_0level = lambda sh: s.down(palm_rest_base_height / 2)(sh)
+        base = place_base_0level(base)
+
+        if side == "left":
+            base = s.mirrorX()(base)
+        return base
+
     def run():
-        # make_keycaps()
+        insert_block_body, insert_block_cutter = arm_insert_block()
+        export_file(
+            shape=insert_block_cutter,
+            fname=path.join(save_path, "insert_block"),
+        )
+        palm_rest_conn_top, palm_rest_conn_bottom = palm_rest_connectors()
+        export_file(
+            shape=palm_rest_conn_top,
+            fname=path.join(save_path, config_name + r"_palm_rest_conn_top"),
+        )
+        export_file(
+            shape=palm_rest_conn_bottom,
+            fname=path.join(save_path, config_name + r"_palm_rest_conn_bottom"),
+        )
         base_arm_r = baseplate(
             side="right", cut_tilter_notch=False, add_arm_insert=True
         )
+        mod_r, walls_r = model_side(side="right")
+        palm_rest = palm_rest_base(side="right")
         export_file(
-            shape=base_arm_r,
-            fname=path.join(save_path, config_name + r"_right_plate_arm"),
+            shape=palm_rest,
+            fname=path.join(save_path, config_name + r"_right_palm_rest"),
         )
         base_arm_l = mirror(
             baseplate(side="left", cut_tilter_notch=False, add_arm_insert=True), "YZ"
+        )
+        mod_l, walls_l = model_side(side="left")
+        palm_rest = palm_rest_base(side="left")
+        export_file(
+            shape=palm_rest,
+            fname=path.join(save_path, config_name + r"_left_palm_rest"),
         )
         export_file(
             shape=base_arm_l,
             fname=path.join(save_path, config_name + r"_left_plate_arm"),
         )
-        mod_r, walls_r = model_side(side="right")
-        export_file(shape=mod_r, fname=path.join(save_path, config_name + r"_right"))
-        mod_l, walls_l = model_side(side="left")
         export_file(shape=mod_l, fname=path.join(save_path, config_name + r"_left"))
+
+        # make_keycaps()
+        export_file(
+            shape=base_arm_r,
+            fname=path.join(save_path, config_name + r"_right_plate_arm"),
+        )
+        export_file(shape=mod_r, fname=path.join(save_path, config_name + r"_right"))
         base_l = mirror(baseplate(side="left"), "YZ")
         export_file(
             shape=base_l, fname=path.join(save_path, config_name + r"_left_plate")
@@ -3928,42 +4038,8 @@ def make_dactyl():
     run()
 
 
-def make_btu2static():
-    shape = cylinder(14 / 2, 2.5)
-    bearing = translate(cylinder(3 / 1.75, 4), [0, 0, 1])
-    shape = difference(shape, [bearing])
-    # shape = union([shape, bearing])
-    export_file(shape, fname="things/btu2static")
-
-
-def rexroth_bearing(cutter):
-    # DELETEME
-    tolerance_diameter = 0.25
-    tolerance_depth = 1.5
-    return translate(
-        union(
-            [
-                translate(
-                    cylinder(12.6 / 2 + tolerance_diameter, 6.4 + tolerance_depth),
-                    [0, 0, -3.2],
-                ),
-                cylinder(17 / 2 + tolerance_diameter, 1.8 + tolerance_depth),
-                translate(
-                    sphere(4)
-                    if not cutter
-                    else translate(cylinder(17 / 2 + tolerance_diameter, 4), [0, 0, 2]),
-                    [0, 0, -0.1],
-                ),
-            ]
-        ),
-        [0, 0, -0.9],
-    )
-
-
 if __name__ == "__main__":
     make_dactyl()
-
-    make_btu2static()
 
     # base = baseplate()
     # export_file(shape=base, fname=path.join(save_path, config_name + r"_plate"))
