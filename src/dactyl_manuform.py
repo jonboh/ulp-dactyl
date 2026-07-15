@@ -3281,7 +3281,7 @@ def make_dactyl():
         return base
 
     def arm_insert_block():
-        centering_hole = s.cylinder(h=100, d=3.4, center=True, _fn=100)
+        centering_hole = s.cylinder(h=100, d=4, center=True, _fn=100)
         insert_hole_height = 6.5
         centering_insert_hole = s.cylinder(
             h=insert_hole_height, d=3.75, center=True, _fn=100
@@ -3781,13 +3781,20 @@ def make_dactyl():
         nut_height = 2.5
         nut_width = 6.5
         p = s.cube([1, 1, palm_rest_base_height], center=True)
-        back = s.cube([70, 1, palm_rest_base_height], center=True)
+        back = s.hull()(
+            s.translateX(-20)(
+                s.cylinder(h=palm_rest_base_height, d=30, center=True, _fn=100)
+            ),
+            s.translateX(20)(
+                s.cylinder(h=palm_rest_base_height, d=30, center=True, _fn=100)
+            ),
+        )
         base = s.hull()(
             s.translate(-25, 0, 0)(p),
             s.translate(0, -10, 0)(p),
             s.translate(-50, -10, 0)(p),
             s.translate(0, -80, 0)(back),
-            s.translate(0, -160, 0)(back),
+            s.translate(0, -140, 0)(back),
         )
         screw_palmrest = s.cylinder(h=nut_hole_depth, d=3.25, center=True, _fn=50)
         screw_hole = s.hull()(
@@ -3809,14 +3816,35 @@ def make_dactyl():
         )(sh)
 
         _, insert_hole_cutter = arm_insert_block()
-        insert_hole_rotation = s.rotate(45)(
-            s.rotate_extrude(angle=-120, _fn=50)(
-                s.projection()(
-                    s.translate(7.5, 0, 0)(
-                        s.rotateX(90)(s.cylinder(h=100, r=1.7, center=True, _fn=100))
-                    )
-                )
+        # insert_hole_rotation = s.rotate(45)(
+        #     s.rotate_extrude(angle=-120, _fn=50)(
+        #         s.projection()(
+        #             s.translate(7.5, 0, 0)(
+        #                 s.rotateX(90)(s.cylinder(h=100, r=1.7, center=True, _fn=100))
+        #             )
+        #         )
+        #     )
+        # )
+        insert_hole_rotation = s.rotate(0)(
+            # s.rotate_extrude(angle=-120, _fn=50)(
+            # s.projection()(
+            s.translate(7.5, 0, 0)(
+                # s.rotateX(90)(
+                s.cylinder(h=100, r=1.7, center=True, _fn=100)
+                # )
             )
+            # )
+            # )
+        )
+        insert_hole_rotation = s.union()(
+            insert_hole_rotation, s.down(12.5)(s.cylinder(h=10, d=27.5, _fn=100))
+        )
+        insert_hole_cutter = s.union()(
+            insert_hole_cutter, s.down(10)(s.cube([26.5, 20.5, 10], center=True))
+        )
+        place_insert = lambda sh: s.translate(-10, -65, 0)(sh)
+        base = s.hull()(
+            base, place_insert(s.down(5)(s.cube([27.5, 25, 10], center=True)))
         )
         base = s.difference()(
             base,
@@ -3825,8 +3853,12 @@ def make_dactyl():
             place_arm_keyboard_insert_block(
                 s.mirrorY()(s.mirrorX()(insert_hole_rotation))
             ),
-            s.translate(-10, -65, 0)(insert_hole_cutter),
+            place_insert(insert_hole_cutter),
             # s.up(3.1)(wall_rubber_feet_holes(side)),
+        )
+        base = s.difference()(
+            base,
+            s.translate(-10, -65, 0)(insert_hole_cutter),
         )
 
         place_base_0level = lambda sh: s.down(palm_rest_base_height / 2)(sh)
